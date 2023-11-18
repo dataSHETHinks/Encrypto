@@ -22,8 +22,6 @@ tzdata==2023.3
 urllib3==1.26.15
 
 pip~=23.3
-zlib~=1.2.13
 wheel~=0.41.2
-openssl~=3.0.12
 cryptography~=41.0.3
 setuptools~=68.0.0
