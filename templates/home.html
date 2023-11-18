@@ -80,58 +80,6 @@ Home
 {% endif %}
 {% endif %}
 
-<!--GLOBAL CRYPTO CURRENCIES-->
-{#<div class="row justify-content-center">#}
-{#  <h2 class="text-center mt-5 mb-0 custom-heading">Top 10 CryptoCurrency Rankings</h2>#}
-{#</div>#}
-{#<div class="flex-container">#}
-{#  {% if top_10_crypto_data_global %}#}
-{#    {% for obj in top_10_crypto_data_global %}#}
-{#      <div class="crypto-item">#}
-{#        <img src="{{ obj.image }}" alt="{{ obj.name }}" height="70">#}
-{#        <div class="crypto-info">#}
-{#          <h3>{{ obj.name }}</h3>#}
-{#          <p><b>Rank:</b> {{ obj.market_cap_rank }}</p>#}
-{#          <p><b>Market cap:</b> {{ obj.market_cap }}</p>#}
-{#          <p><b>Price:</b> {{ obj.current_price }}</p>#}
-{#          <p><b>Price Change 24H:</b> {{ obj.price_change_24h|floatformat:5 }}#}
-{#            {% if obj.price_change_percentage_24h > 0 %}#}
-{#              <i class="fa fa-arrow-up green-arrow"></i>#}
-{#            {% else %}#}
-{#              <i class="fa fa-arrow-down red-arrow"></i>#}
-{#            {% endif %}#}
-{#          </p>#}
-{#          <p><b>Price Change 24H (%):</b> {{ obj.price_change_percentage_24h|floatformat:3 }}#}
-{#            {% if obj.price_change_percentage_24h > 0 %}#}
-{#              <i class="fa fa-arrow-up green-arrow"></i>#}
-{#            {% else %}#}
-{#              <i class="fa fa-arrow-down red-arrow"></i>#}
-{#            {% endif %}#}
-{#          </p>#}
-{#        </div>#}
-{#      </div>#}
-{#    {% endfor %}#}
-{#  {% else %}#}
-{#    <h3>No data</h3>#}
-{#  {% endif %}#}
-{#</div>#}
-{##}
-{#<br><br><br>#}
-{#{% endblock content %}#}
-{##}
-{#{% block scripts %}#}
-{#{% endblock scripts %}#}
-
-
-{##}
-{#{% extends 'base.html' %}#}
-{#{% block title %} Home {% endblock title %}#}
-{#{% block content %}#}
-{##}
-{#<div class="row justify-content-center">#}
-{#  <h2 class="text-center mt-5 mb-0 custom-heading">Top 10 Cryptocurrency Rankings</h2>#}
-{#</div>#}
-
 <!-- Top 10 Cryptocurrency Rankings Table -->
 <div class="container-fluid mt-5">
   <table class="table table-bordered table-hover">
