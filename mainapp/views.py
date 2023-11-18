@@ -198,7 +198,6 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 
-@login_required(login_url="login")
 def search_view(request):
     if request.method != 'POST':
         # return HTTP status code 405 if the request method is not POST along with a message
