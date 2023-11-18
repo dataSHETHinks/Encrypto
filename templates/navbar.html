@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-md" style="background: #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
-  <a class="navbar-brand my-2 my-sm-0 custom-nav-logo" href="{% url 'home' %}" style="color: #f8f8f8;">Encrypto</a>
+<nav class="navbar navbar-expand-md bg-dark" style="">
+  <a class="navbar-brand my-2 my-sm-0 custom-nav-logo text-white" href="{% url 'home' %}" >Encrypto</a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -14,8 +14,8 @@
       </div>
       {% else %}
       <div class="btn-group" role="group">
-        <a class="btn my-2 my-sm-0 mr-2" href="{% url 'login' %}" style="background-color: #555; border-color: #555; color: #fff; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);">Login</a>
-        <a class="btn my-2 my-sm-0" href="{% url 'signup' %}" style="background-color: #777; border-color: #777; color: #fff; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);">Signup</a>
+        <a class="btn my-2 my-sm-0 mr-2 bg-primary rounded-lg text-white" href="{% url 'login' %}" >Login</a>
+        <a class="btn my-2 my-sm-0 bg-primary rounded-lg text-white" href="{% url 'signup' %}" style="background-color: #777; border-color: #777; color: #fff; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);">Signup</a>
       </div>
       {% endif %}
     </ul>
