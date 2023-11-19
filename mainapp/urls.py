@@ -31,5 +31,7 @@ urlpatterns = [
 
     path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(
     template_name='reset/password_reset_complete.html'), name='password_reset_complete'),
+
+    path('rate_limit_err/', views.rate_limit_err, name="rate_limit_err")
 ]
 
