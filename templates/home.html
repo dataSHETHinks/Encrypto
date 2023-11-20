@@ -22,8 +22,6 @@ Home
   </div>
 {% endif %}
 
-    <h1>Today's Cryptocurrency Prices by Market Cap
-</h1>
 
 
 <!-- HIGHLIGHTS SECTION -->
@@ -40,13 +38,22 @@ Home
         {% endfor %}
     </div>
 
-    <!-- BOTTOM 3 CURRENCIES -->
-    <div class="crypto-item">
-        <h3>Bottom 3</h3>
-        {% for cryptocurrency in bottom_3_price %}
-            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
-        {% endfor %}
+    <!-- TRENDING CURRENCIES SECTION -->
+    <div class="row justify-content-center">
     </div>
+    <div class="flex-container trending-container">
+    <!-- Display the trending cryptocurrencies -->
+    <div class="crypto-item">
+        <h3>Trending</h3>
+        {% for cryptocurrency in trending_crypto_data.coins|slice:":3" %}
+        <p>
+            <b>{{ cryptocurrency.item.name }}</b> - Rank: {{ cryptocurrency.item.market_cap_rank }}
+
+        </p>
+    {% endfor %}
+    </div>
+    </div>
+
 
     <!-- LATEST 3 CURRENCIES -->
     <div class="crypto-item">
@@ -77,6 +84,10 @@ Home
     </div>
   </div>
 </div>
+
+        <h1>Today's Cryptocurrency Prices by Market Cap
+</h1>
+
 
 <!-- 24H Summary -->
 {% if user.is_authenticated %}
