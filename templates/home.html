@@ -25,6 +25,38 @@ Home
     <h1>Today's Cryptocurrency Prices by Market Cap
 </h1>
 
+
+<!-- HIGHLIGHTS SECTION -->
+<div class="row justify-content-center">
+    <h2 class="text-center mt-5 mb-0 custom-heading">Highlights</h2>
+</div>
+<!-- Ensure there is some space between this header and the flex-container -->
+<div class="flex-container highlights-container"> <!-- Add a custom class 'highlights-container' -->
+    <!-- TOP 3 CURRENCIES -->
+    <div class="crypto-item">
+        <h3>Top 3</h3>
+        {% for cryptocurrency in highlights_data|slice:":3" %}
+            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- BOTTOM 3 CURRENCIES -->
+    <div class="crypto-item">
+        <h3>Bottom 3</h3>
+        {% for cryptocurrency in bottom_3_price %}
+            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- LATEST 3 CURRENCIES -->
+    <div class="crypto-item">
+        <h3>Last Updated</h3>
+        {% for cryptocurrency in latest_3_added %}
+            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
+        {% endfor %}
+    </div>
+</div>
+
 <!--SEARCH BAR-->
 <div class="container mt-5 mb-5">
   <div class="row justify-content-center">

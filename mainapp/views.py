@@ -160,7 +160,11 @@ def home_view(request):
     top_10_crypto_url_global = ('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc'
                                 '&per_page=10&page=1&sparkline=true')
     top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
-
+    highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
+    # Fetch bottom 3 cryptocurrencies based on price
+    bottom_3_price = Cryptocurrency.objects.all().order_by('current_price')[:3]
+    # Fetch latest 3 cryptocurrencies based on date added
+    latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
     # check if user is logged in    
     if request.user.is_authenticated:
 
@@ -191,10 +195,17 @@ def home_view(request):
             'user_cryptocurrencies': user_cryptocurrencies,
             'user_portfolio': user_portfolio,
             'crypto_price_changes': crypto_price_changes,
+            'highlights_data': highlights_data,
+            'bottom_3_price': bottom_3_price,
+            'latest_3_added': latest_3_added,
         }
 
     else:
-        context = {'top_10_crypto_data_global': top_10_crypto_data_global}
+        context = {'top_10_crypto_data_global': top_10_crypto_data_global,
+                   'highlights_data': highlights_data,
+                   'bottom_3_price': bottom_3_price,
+                   'latest_3_added': latest_3_added,
+                   }
     return render(request, 'home.html', context)
 
 
