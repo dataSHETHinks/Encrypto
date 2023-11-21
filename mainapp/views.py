@@ -198,12 +198,11 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 
-@login_required(login_url="login")
 def search_view(request):
     if request.method != 'POST':
         # return HTTP status code 405 if the request method is not POST along with a message
-        return HttpResponseNotAllowed(['POST'], 'Only POST requests are allowed for this view. Go back and search a '
-                                                'cryptocurrency.')
+        return HttpResponseNotAllowed(['POST'],
+                                      'Only POST requests are allowed for this view. Go back and search a cryptocurrency.')
 
     if not (search_query := request.POST.get('search_query')):
         return HttpResponse('No crypto currency found based on your search query.')
@@ -211,33 +210,37 @@ def search_view(request):
     api_url = f'https://api.coingecko.com/api/v3/search?query={search_query}'
     response = requests.get(api_url)
     search_results = response.json()
-    try:
-        data = search_results['coins'][0]
-    except IndexError:
-        return HttpResponse('No crypto currency found based on your search query.')
-    coin_id = data['id']
-    image = data['large']
-    symbol = data['symbol']
-    market_cap = data['market_cap_rank']
+    cryptocurrencies = []
+    for data in search_results.get('coins', []):
+        coin_id = data.get('id')
+        image = data.get('large')
+        symbol = data.get('symbol')
+        market_cap = data.get('market_cap_rank')
+        print(coin_id)
+        # check if the crypto currency is already in the users portfolio and pass that information to the template
+        #     current_user = request.user
+        #     is_already_in_portfolio = False
+        #
+        #     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
+        #     for cryptocurrency in user_cryptocurrencies:
+        #         if cryptocurrency.name.lower() == coin_id.lower():
+        #             is_already_in_portfolio = True
 
-    # check if the crypto currency is already in the users portfolio and pass that information to the template
-    current_user = request.user
-    is_already_in_portfolio = False
+        cryptocurrency_info = {
+            'data': data,
+            'coin_id': coin_id,
+            'image': image,
+            'symbol': symbol,
+            'market_cap': market_cap,
+            # 'is_already_in_portfolio': is_already_in_portfolio,
+        }
 
-    user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
-    for cryptocurrency in user_cryptocurrencies:
-        if cryptocurrency.name.lower() == coin_id.lower():
-            is_already_in_portfolio = True
-
+        cryptocurrencies.append(cryptocurrency_info)
     context = {
-        'data': data,
-        'coin_id': coin_id,
-        'image': image,
-        'symbol': symbol,
-        'market_cap': market_cap,
-        'is_already_in_portfolio': is_already_in_portfolio,
+        'cryptocurrencies': cryptocurrencies,
+        'search_query': search_query,
     }
-    return render(request, 'search.html', context)
+    return render(request, 'search.html', {"cryptocurrencies": cryptocurrencies})
 
 
 @login_required(login_url="login")
