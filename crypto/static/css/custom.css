@@ -23,7 +23,6 @@ body {
   overflow-x: hidden !important;
   color: #333 !important; /* Dark grey text for readability */
   font-family: 'Roboto', sans-serif !important;
-  background-color: #f0f0f0 !important; /* Light grey background */
   min-height: 100vh !important;
 }
 
