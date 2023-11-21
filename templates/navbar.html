@@ -1,5 +1,9 @@
+{% load static %}
 <nav class="navbar navbar-expand-md bg-dark" style="">
-  <a class="navbar-brand my-2 my-sm-0 custom-nav-logo text-white" href="{% url 'home' %}" >Encrypto</a>
+  <a class="navbar-brand my-2 my-sm-0 custom-nav-logo text-white" href="{% url 'home' %}" >
+      <img src="{% static 'encrypto.png' %}" alt="Logo" height="70px" width="70px"/>
+      Encrypto
+  </a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>

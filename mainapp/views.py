@@ -326,3 +326,16 @@ def delete_from_portfolio_view(request, pk):
     messages.warning(request, f'{crypto_currency.name} has been deleted from your portfolio.')
 
     return redirect('portfolio')
+
+
+def about_us(request):
+    return render(request, 'aboutUs.html')
+
+def terms_of_service(request):
+    return render(request, 'termsAndConditions.html')
+
+def privacy_policy(request):
+    return render(request, 'privacyPolicy.html')
+
+def contact_us(request):
+    return render(request, 'contactUs.html')
