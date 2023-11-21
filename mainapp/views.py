@@ -120,40 +120,66 @@ def portfolio_view(request):
     # get the list of cryptocurrencies owned by the current user
     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
 
+    if len(user_cryptocurrencies) == 0:
+        context = {
+            'current_user': current_user,
+            'user_cryptocurrencies': user_cryptocurrencies,
+            'new_portfolio_value': 0.0,
+            'margin': 0
+        }
+        return render(request, 'portfolio.html', context)
+
+
     if user_portfolio := Portfolio.objects.filter(user=current_user).first():
         portfolio = Portfolio.objects.get(user=current_user)
 
         # get all the crypto currencies in the portfolio and recalculate the total value of the portfolio
-        new_portfolio_value = 0
+        new_portfolio_value = 0.0
+        sp_sum = 0.0
+        bp_sum = 0.0
 
         user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
-        for cryptocurrency in user_cryptocurrencies:
-            total_value = cryptocurrency.quantity * cryptocurrency.current_price
-            new_portfolio_value += total_value
+        all_user_crypto = []
 
+        for crypto in user_cryptocurrencies:
+            api_url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto.id_from_api}&vs_currencies=usd'
+            try:
+                response = requests.get(api_url)
+                response.raise_for_status()
+                data = response.json()
+                curr = data[crypto.id_from_api]['usd']
+                new_crypto_data = {
+                    'id': crypto.id,
+                    'name': crypto.name,
+                    'id_from_api': crypto.id_from_api,
+                    'current_price': crypto.current_price,
+                    'quantity': crypto.quantity,
+                    'now': curr,
+                }
+                all_user_crypto.append(new_crypto_data)
+                sp_sum = sp_sum + (float(new_crypto_data['now']) * float(new_crypto_data['quantity']))
+                bp_sum = bp_sum + (float(crypto.current_price) * float(crypto.quantity))
+
+            except requests.exceptions.RequestException as e:
+                return redirect('rate_limit_err')
+
+        try:
+            for cryptocurrency in all_user_crypto:
+                total_value = float(cryptocurrency['quantity']) * float(cryptocurrency['now'])
+                new_portfolio_value += total_value
+        except TypeError as e:
+            return redirect('rate_limit_err')
         portfolio.total_value = new_portfolio_value
         portfolio.save()
 
         context = {
             'current_user': current_user,
-            'referral_code': referral_code,
-            'user_cryptocurrencies': user_cryptocurrencies,
+            'user_cryptocurrencies': all_user_crypto,
             'user_portfolio': user_portfolio,
-            'referrals': referrals,
-            'total_bonus': total_bonus,
             'new_portfolio_value': new_portfolio_value,
-        }
-    else:
-        context = {
-            'current_user': current_user,
-            'referral_code': referral_code,
-            'user_cryptocurrencies': user_cryptocurrencies,
-            'user_portfolio': user_portfolio,
-            'referrals': referrals,
-            'total_bonus': total_bonus,
+            'margin': ((sp_sum - bp_sum) / sp_sum) * 100
         }
     return render(request, 'portfolio.html', context)
-
 
 def home_view(request):
     # get the top 10 crypto currencies by market cap
@@ -175,14 +201,16 @@ def home_view(request):
         prices = []
 
         # NOTE: Only showing the price change for the last 24 hours for now and not the percentage change to reduce the number of api calls. Only 10-20 api calls per minute are allowed for free users. Otherwise, I could have used the /coins/{id}/market_chart?vs_currency=usd&days=1 endpoint to get the price change for the last 24 hours and calculate the percentage change from that.
-        for crytpo_id in ids:
-            prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}&vs_currencies=usd'
-                          f'&include_24hr_change=true')
-            prices_data = requests.get(prices_url).json()
+        try:
+            for crytpo_id in ids:
+                prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}&vs_currencies=usd'
+                              f'&include_24hr_change=true')
+                prices_data = requests.get(prices_url).json()
 
-            price_change = prices_data[crytpo_id]['usd_24h_change']
-            prices.append(price_change)
-
+                price_change = prices_data[crytpo_id]['usd_24h_change']
+                prices.append(price_change)
+        except Exception as e:
+            return redirect('rate_limit_err')
         # make a dictionary out of the names and prices
         crypto_price_changes = dict(zip(names, prices))
 
@@ -304,23 +332,35 @@ def add_to_portfolio_view(request):
 def delete_from_portfolio_view(request, pk):
     # get the current logged in user
     user = request.user
+    sp = request.GET.get('sp', None)
+    if sp is None:
+        # Do something with sp_value
+        messages.warning(request, f'Failed to obtain selling price!')
+        return redirect('portfolio')
+    sp = float(sp)
 
     # get the crypto currency object from the database
     crypto_currency = Cryptocurrency.objects.get(pk=pk)
 
+
+
     # delete the crypto currency from the database
-    crypto_currency.delete()
+    # crypto_currency.delete()
 
     # update the total value of the portfolio
     portfolio = Portfolio.objects.get(user=user)
+    portfolio.total_value = float(portfolio.total_value) - (float(crypto_currency.quantity) * sp)
+
+    crypto_currency.delete()
+    portfolio.save()
 
     # get all the crypto currencies in the portfolio and recalculate the total value of the portfolio
-    user_cryptocurrencies = Cryptocurrency.objects.filter(user=user)
-    for cryptocurrency in user_cryptocurrencies:
-        total_value = cryptocurrency.quantity * cryptocurrency.current_price
-        portfolio.total_value += total_value
+    # user_cryptocurrencies = Cryptocurrency.objects.filter(user=user)
+    # for cryptocurrency in user_cryptocurrencies:
+    #     total_value = cryptocurrency.quantity * sp
+    #     portfolio.total_value += total_value
 
-    portfolio.save()
+    # portfolio.save()
 
     # send an alert to the user that the crypto currency has been deleted from the portfolio
     messages.warning(request, f'{crypto_currency.name} has been deleted from your portfolio.')
@@ -339,3 +379,6 @@ def privacy_policy(request):
 
 def contact_us(request):
     return render(request, 'contactUs.html')
+
+def rate_limit_err(request):
+    return render(request, 'rate_limit.html')
