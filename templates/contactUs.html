@@ -1,14 +1,58 @@
 {% extends 'base.html' %}
-
-{% block title %} Contact Us {% endblock title %}
-
+{% block title %}
+Contact Us
+{% endblock title %}
 {% block content %}
-    <div class="container mt-5">
-        <h1>Contact Us</h1>
-        <p>123 Street, City, Country<br>
-           Phone: +123 456 789<br>
-           Email: info@example.com
-        </p>
-        <!-- Add more content as needed -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow p-4">
+                <h1 class="text-center mb-4">Contact Us</h1>
+
+                <!-- Display Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.subject.label_tag }}
+                        {{ form.subject }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Send</button>
+                </form>
+
+            </div>
+        <div class="row mt-4">
+        <div class="col-md-6">
+            <p><strong>Address:</strong> 401 University Ave, Windsor, Canada<br>
+               <strong>Phone:</strong> +123 456 789<br>
+               <strong>Email:</strong> contact_encrypto@gmail.com
+            </p>
+        </div>
     </div>
-{% endblock content %}
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

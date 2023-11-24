@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from mainapp.models import Contact
+
 
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(required=True, label='Username', help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -16,3 +18,10 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
         
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['name', 'email', 'subject', 'message']
+
+class SubscriptionForm(forms.Form):
+            email = forms.EmailField(label='Enter your e-mail address', required=True)

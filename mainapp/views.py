@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.utils.http import urlsafe_base64_decode
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ContactForm
 from .models import Cryptocurrency, Portfolio, Profile, Referal
 
 
@@ -393,8 +393,20 @@ def terms_of_service(request):
 def privacy_policy(request):
     return render(request, 'privacyPolicy.html')
 
-def contact_us(request):
-    return render(request, 'contactUs.html')
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            form.save()
+            # Add success message
+            messages.success(request, 'Email Sent Successfully!')
+            return redirect('contact')  # Redirect back to the contact page or another page
+    else:
+        form = ContactForm()
+
+    return render(request, 'contactUs.html', {'form': form})
+
 
 def rate_limit_err(request):
     return render(request, 'rate_limit.html')
