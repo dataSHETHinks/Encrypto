@@ -9,6 +9,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     referral_code = models.CharField(max_length=10, unique=True)
     bonus = models.IntegerField(default=0)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} profile'
