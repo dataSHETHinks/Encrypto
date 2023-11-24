@@ -215,3 +215,35 @@ tbody tr:hover {
   color: red
 }
 
+
+.subscribe-section {
+  text-align: center;
+  background-color: #EFF2F5; /* Adjust the background color as needed */
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.subscribe-section h3 {
+  margin-bottom: 15px;
+  /* Add more styles for the heading */
+}
+
+.subscribe-section p {
+  margin-bottom: 20px;
+  /* Add more styles for the paragraph */
+}
+
+.subscription-form {
+  margin-bottom: 20px;
+}
+
+.subscription-form input[type="email"] {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 300px; /* Or as per your design */
+}
+
+.btn-primary {
+  background-color: #007bff; /* Bootstrap primary color */
+  border-color: #007bff;
+}

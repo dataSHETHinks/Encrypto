@@ -22,47 +22,8 @@ Home
   </div>
 {% endif %}
 
-
-
-<!-- HIGHLIGHTS SECTION -->
-<div class="row justify-content-center">
-    <h2 class="text-center mt-5 mb-0 custom-heading">Highlights</h2>
-</div>
-<!-- Ensure there is some space between this header and the flex-container -->
-<div class="flex-container highlights-container"> <!-- Add a custom class 'highlights-container' -->
-    <!-- TOP 3 CURRENCIES -->
-    <div class="crypto-item">
-        <h3>Top 3</h3>
-        {% for cryptocurrency in highlights_data|slice:":3" %}
-            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
-        {% endfor %}
-    </div>
-
-    <!-- TRENDING CURRENCIES SECTION -->
-    <div class="row justify-content-center">
-    </div>
-    <div class="flex-container trending-container">
-    <!-- Display the trending cryptocurrencies -->
-    <div class="crypto-item">
-        <h3>Trending</h3>
-        {% for cryptocurrency in trending_crypto_data.coins|slice:":3" %}
-        <p>
-            <b>{{ cryptocurrency.item.name }}</b> - Rank: {{ cryptocurrency.item.market_cap_rank }}
-
-        </p>
-    {% endfor %}
-    </div>
-    </div>
-
-
-    <!-- LATEST 3 CURRENCIES -->
-    <div class="crypto-item">
-        <h3>Last Updated</h3>
-        {% for cryptocurrency in latest_3_added %}
-            <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
-        {% endfor %}
-    </div>
-</div>
+    <h1>Today's Cryptocurrency Prices by Market Cap
+</h1>
 
 <!--SEARCH BAR-->
 <div class="container mt-5 mb-5">
@@ -84,10 +45,6 @@ Home
     </div>
   </div>
 </div>
-
-        <h1>Today's Cryptocurrency Prices by Market Cap
-</h1>
-
 
 <!-- 24H Summary -->
 {% if user.is_authenticated %}
@@ -176,6 +133,18 @@ Home
   </table>
 </div>
 
+    <div class="subscribe-section">
+  <h3>Dive into the digital currency deep with Encrypto: Stay updated, stay ahead.</h3>
+
+  <form method="post" action="{% url 'home' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ subscription_form.email.label_tag }}
+      {{ subscription_form.email }}
+    </div>
+    <button type="submit" class="btn btn-primary">Subscribe</button>
+  </form>
+</div>
 <br><br><br>
 {% endblock content %}
 
