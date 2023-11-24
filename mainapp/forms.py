@@ -24,4 +24,5 @@ class ContactForm(forms.ModelForm):
         fields = ['name', 'email', 'subject', 'message']
 
 class SubscriptionForm(forms.Form):
-            email = forms.EmailField(label='Enter your e-mail address', required=True)
+    email = forms.EmailField(label='Enter your e-mail address', required=True)
+

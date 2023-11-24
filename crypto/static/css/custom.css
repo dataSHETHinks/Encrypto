@@ -83,10 +83,6 @@ footer {
   background-color: #f8f8f8; /* Light background */
   color: #333; /* Dark grey text */
   text-align: center;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 1;
 }
 
 /* Custom Heading Styles */
@@ -145,6 +141,7 @@ tbody tr:hover {
 .alert-success {
   background-color: #e9f5db; /* Soft green for success */
   border-left: 5px solid #4caf50; /* Brighter green for the border */
+  color: green;
 }
 
 .alert-info {
@@ -185,36 +182,6 @@ tbody tr:hover {
   margin-bottom: 50px !important;
   padding: 0.5rem 0.5rem !important
 }
-
-.highlights-container {
-    margin-top: 20px; /* Adjust the margin-top as needed */
-}
-
-.highlights-container .crypto-item {
-    /* Apply styles similar to the global crypto currencies section */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid rgb(128, 128, 128);
-    padding: 10px;
-    width: 300px;
-}
-
-.highlights-container .crypto-item h3 {
-    /* Style for the heading within each crypto-item */
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-.green-arrow {
-  font-size: 18px;
-  color: green
-}
-
-.red-arrow {
-  font-size: 18px;
-  color: red
-}
-
 
 .subscribe-section {
   text-align: center;
