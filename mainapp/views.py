@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.utils.http import urlsafe_base64_decode
 
-from .forms import CustomUserCreationForm, ContactForm
+from .forms import CustomUserCreationForm, ContactForm, SubscriptionForm
 from .models import Cryptocurrency, Portfolio, Profile, Referal
 
 
@@ -182,65 +182,52 @@ def portfolio_view(request):
     return render(request, 'portfolio.html', context)
 
 def home_view(request):
-    # get the top 10 crypto currencies by market cap
-    top_10_crypto_url_global = ('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc'
-                                '&per_page=10&page=1&sparkline=true')
-    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
-    # get the trending cryptocurrencies
-    trending_crypto_url = 'https://api.coingecko.com/api/v3/search/trending'
-    trending_crypto_data = requests.get(trending_crypto_url).json()
-    highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
-    # Fetch bottom 3 cryptocurrencies based on price
-    #bottom_3_price = Cryptocurrency.objects.all().order_by('current_price')[:3]
-    # Fetch latest 3 cryptocurrencies based on date added
-    latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
-    # check if user is logged in    
-    if request.user.is_authenticated:
+    subscription_form = SubscriptionForm()  # Initialize the subscription form
 
-        # get user's crypto currencies
+    # Handle the subscription form submission
+    if request.method == 'POST':
+        subscription_form = SubscriptionForm(request.POST)
+        if subscription_form.is_valid():
+            # Process the subscription here (e.g., save email to database or mailing list)
+            # For demonstration purposes, we're just showing a success message
+            messages.success(request, 'You are all set!')
+            return redirect('home_view')  # Redirect to clear POST data and avoid resubmitting form
+
+    # Retrieve the top 10 crypto currencies by market cap
+    top_10_crypto_url_global = ('https://api.coingecko.com/api/v3/coins/markets'
+                                '?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true')
+    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
+
+    # Prepare the context for rendering
+    context = {'top_10_crypto_data_global': top_10_crypto_data_global, 'subscription_form': subscription_form}
+
+    # If user is logged in, fetch additional data
+    if request.user.is_authenticated:
         user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
         user_portfolio = Portfolio.objects.filter(user=request.user).first()
 
-        # get the prices and price changes for user's cryptocurrencies
+        # Get the prices and price changes for user's cryptocurrencies
         names = [crypto.name for crypto in user_cryptocurrencies]
-        symbols = [crypto.symbol for crypto in user_cryptocurrencies]
         ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
         prices = []
 
-        # NOTE: Only showing the price change for the last 24 hours for now and not the percentage change to reduce the number of api calls. Only 10-20 api calls per minute are allowed for free users. Otherwise, I could have used the /coins/{id}/market_chart?vs_currency=usd&days=1 endpoint to get the price change for the last 24 hours and calculate the percentage change from that.
-        try:
-            for crytpo_id in ids:
-                prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}&vs_currencies=usd'
-                              f'&include_24hr_change=true')
-                prices_data = requests.get(prices_url).json()
+        for crytpo_id in ids:
+            prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}'
+                          f'&vs_currencies=usd&include_24hr_change=true')
+            prices_data = requests.get(prices_url).json()
+            price_change = prices_data[crytpo_id]['usd_24h_change']
+            prices.append(price_change)
 
-                price_change = prices_data[crytpo_id]['usd_24h_change']
-                prices.append(price_change)
-        except Exception as e:
-            return redirect('rate_limit_err')
-        # make a dictionary out of the names and prices
         crypto_price_changes = dict(zip(names, prices))
 
-        context = {
-            'top_10_crypto_data_global': top_10_crypto_data_global,
+        # Update the context for authenticated users
+        context.update({
             'user_cryptocurrencies': user_cryptocurrencies,
             'user_portfolio': user_portfolio,
             'crypto_price_changes': crypto_price_changes,
-            'highlights_data': highlights_data,
-            'trending_crypto_data': trending_crypto_data,
-            #'bottom_3_price': bottom_3_price,
-            'latest_3_added': latest_3_added,
-        }
+        })
 
-    else:
-        context = {'top_10_crypto_data_global': top_10_crypto_data_global,
-                   'highlights_data': highlights_data,
-                   'trending_crypto_data': trending_crypto_data,
-                   #'bottom_3_price': bottom_3_price,
-                   'latest_3_added': latest_3_added,
-                   }
     return render(request, 'home.html', context)
-
 
 def search_view(request):
     if request.method != 'POST':

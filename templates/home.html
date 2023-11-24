@@ -133,17 +133,25 @@ Home
   </table>
 </div>
 
-    <div class="subscribe-section">
-  <h3>Dive into the digital currency deep with Encrypto: Stay updated, stay ahead.</h3>
+    <div class="container mt-5">
+  <div class="row justify-content-start">
+    <div class="col-md-12">
+      <div class="card shadow-lg"> <!-- Added 'shadow-lg' for a large shadow effect -->
+        <div class="card-body">
+          <h3 class="card-title">Dive into the digital currency deep with Encrypto: Stay updated, stay ahead.</h3>
 
-  <form method="post" action="{% url 'home' %}">
-    {% csrf_token %}
-    <div class="form-group">
-      {{ subscription_form.email.label_tag }}
-      {{ subscription_form.email }}
+          <form method="post" action="{% url 'home' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ subscription_form.email.label_tag }}
+              {{ subscription_form.email }}
+            </div>
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Subscribe</button>
-  </form>
+  </div>
 </div>
 <br><br><br>
 {% endblock content %}
