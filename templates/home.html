@@ -26,39 +26,55 @@ Home
 
 <!-- HIGHLIGHTS SECTION -->
 <div class="row justify-content-center">
-    <h2 class="text-center mt-5 mb-0 custom-heading">Highlights</h2>
+{#    <h2 class="text-center mt-5 mb-0 custom-heading">Highlights</h2>#}
 </div>
+
+<!-- Add a button to toggle the highlights -->
+<div class="row justify-content-center">
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#top3Collapse" aria-expanded="false" aria-controls="top3Collapse">
+        Highlights
+    </button>
+</div>
+
 <!-- Ensure there is some space between this header and the flex-container -->
-<div class="flex-container highlights-container"> <!-- Add a custom class 'highlights-container' -->
+<div class="flex-container highlights-container collapse" id="top3Collapse"> <!-- Add a custom class 'highlights-container' and collapse class -->
     <!-- TOP 3 CURRENCIES -->
     <div class="crypto-item">
         <h3>Top 3</h3>
         {% for cryptocurrency in highlights_data|slice:":3" %}
+{#            <img src="{{ cryptocurrency.image }}" alt="{{ cryptocurrency.name }}" height="20">#}
             <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
         {% endfor %}
     </div>
 
     <!-- TRENDING CURRENCIES SECTION -->
-    <div class="row justify-content-center">
-    </div>
+<div class="row justify-content-center">
     <div class="flex-container trending-container">
-    <!-- Display the trending cryptocurrencies -->
-    <div class="crypto-item">
-        <h3>Trending</h3>
-        {% for cryptocurrency in trending_crypto_data.coins|slice:":3" %}
-        <p>
-            <b>{{ cryptocurrency.item.name }}</b> - Rank: {{ cryptocurrency.item.market_cap_rank }}
+        <!-- Display the trending cryptocurrencies -->
+        <div class="crypto-item">
+            <h3>Trending</h3>
+            {% for cryptocurrency in trending_crypto_data.coins|slice:":3" %}
+                <div class="trending-item ">
+                    <div class="col-auto">
+                        <img src="{{ cryptocurrency.item.large }}" alt="{{ cryptocurrency.item.name }}" height="20">
+                    </div>
+                    <div class="col">
+                        <p><b>{{ cryptocurrency.item.name }}</b> - Rank: {{ cryptocurrency.item.market_cap_rank }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
-        </p>
-    {% endfor %}
-    </div>
-    </div>
 
 
     <!-- LATEST 3 CURRENCIES -->
     <div class="crypto-item">
         <h3>Last Updated</h3>
         {% for cryptocurrency in latest_3_added %}
+{#            <img src="{{ cryptocurrency.image }}" alt="{{ cryptocurrency.name }}" height="20">#}
+            <img src="{{ obj.image }}" alt="{{ obj.name }}" height="20"> {{ obj.name }}
             <p><b>{{ cryptocurrency.name }}</b> - Price: {{ cryptocurrency.current_price }}</p>
         {% endfor %}
     </div>
