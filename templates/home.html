@@ -23,7 +23,6 @@ Home
 {% endif %}
 
 
-
 <!-- HIGHLIGHTS SECTION -->
 <div class="row justify-content-center">
 {#    <h2 class="text-center mt-5 mb-0 custom-heading">Highlights</h2>#}
@@ -79,6 +78,10 @@ Home
         {% endfor %}
     </div>
 </div>
+=======
+    <h1>Today's Cryptocurrency Prices by Market Cap
+</h1>
+
 
 <!--SEARCH BAR-->
 <div class="container mt-5 mb-5">
@@ -100,10 +103,6 @@ Home
     </div>
   </div>
 </div>
-
-        <h1>Today's Cryptocurrency Prices by Market Cap
-</h1>
-
 
 <!-- 24H Summary -->
 {% if user.is_authenticated %}
@@ -192,6 +191,26 @@ Home
   </table>
 </div>
 
+    <div class="container mt-5">
+  <div class="row justify-content-start">
+    <div class="col-md-12">
+      <div class="card shadow-lg"> <!-- Added 'shadow-lg' for a large shadow effect -->
+        <div class="card-body">
+          <h3 class="card-title">Dive into the digital currency deep with Encrypto: Stay updated, stay ahead.</h3>
+
+          <form method="post" action="{% url 'home' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ subscription_form.email.label_tag }}
+              {{ subscription_form.email }}
+            </div>
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <br><br><br>
 {% endblock content %}
 

@@ -36,7 +36,7 @@ urlpatterns = [
     path('about-us', views.about_us, name = "about_us"),
     path('terms-and-conditions', views.terms_of_service, name = "terms_of_service"),
     path('privacy-policy', views.privacy_policy, name = 'privacy_policy'),
-    path('contact-us', views.contact_us, name = 'contact_us'),
+    path('contact-us', views.contact, name = 'contact'),
     path('rate_limit_err/', views.rate_limit_err, name="rate_limit_err")
 ]
 
