@@ -1,5 +1,40 @@
-env/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local development settings
 .env
 
-mainapp/__pycache__/views.cpython-310.pyc
-mainapp/__pycache__/urls.cpython-310.pyc
+# Database files
+db.sqlite3
+
+# Media files
+media/
+
+# Static files
+staticfiles/
+
+# Log files
+*.log
+
+# Ignore the local settings file
+local_settings.py
+
+# Ignore the virtual environment directory
+venv/
+venv*/
+*.venv/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore pycache folders and files
+__pycache__/
+*.pyc
+
+# Ignore migration files
+**/migrations/
+
+# Ignore secrets file
+secrets.json
