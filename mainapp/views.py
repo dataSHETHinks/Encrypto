@@ -30,7 +30,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=raw_password)
             if user is not None:
                 login(request, user)
-                return redirect('portfolio')
+                return redirect('')
         else:
             messages.error(request, "Invalid username or password.", extra_tags='danger')
     else:
@@ -51,9 +51,10 @@ def signup_view(request):
         return redirect('portfolio')
 
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        print("form is", form)
         if form.is_valid():
+            print("yes")
             user = form.save(commit=False)
             user.password = make_password(form.cleaned_data['password1'])
             user.email = form.cleaned_data['email']
