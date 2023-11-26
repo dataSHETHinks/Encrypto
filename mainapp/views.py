@@ -339,7 +339,7 @@ def checkout_complete(request):
             if len(curr_crypto) != 0:
                 curr_crypto = curr_crypto[0]
                 curr_crypto.current_price = float(request.POST.get('current_price'))
-                curr_crypto.quantity += int(request.POST.get('quantity'))
+                curr_crypto.quantity = float(curr_crypto.quantity) + float(request.POST.get('quantity'))
                 curr_crypto.save()
             else:
                 # save the crypto currency to the database
@@ -348,7 +348,7 @@ def checkout_complete(request):
                     name=request.POST.get('cname'),
                     id_from_api=request.POST.get('id_from_api'),
                     symbol=request.POST.get('symbol'),
-                    quantity=request.POST.get('quantity'),
+                    quantity=float(request.POST.get('quantity')),
                     current_price=request.POST.get('current_price'),
                 )
                 crypto_currency.save()
