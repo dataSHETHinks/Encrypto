@@ -200,15 +200,6 @@ tbody tr:hover {
 }
 
 
-.highlights-container .crypto-item {
-    /* Apply styles similar to the global crypto currencies section */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid rgb(128, 128, 128);
-    padding: 10px;
-    width: 350px;
-=======
 .subscribe-section h3 {
   margin-bottom: 15px;
   /* Add more styles for the heading */
@@ -221,23 +212,7 @@ tbody tr:hover {
 }
 
 
-.trending-item {
-    display: flex;
-    /*align-items: stretch; !* Align items vertically *!*/
-    margin-bottom: 10px; /* Adjust margin as needed */
-}
 
-.trending-item img {
-    margin-right: 10px; /* Adjust margin between image and text */
-    justify-content: space-between;
-    /*vertical-align: middle; !* Align the image vertically in the middle *!*/
-}
-
-
-.green-arrow {
-  font-size: 18px;
-  color: green
-=======
 .subscription-form {
   margin-bottom: 20px;
 
@@ -247,6 +222,47 @@ tbody tr:hover {
   border: 1px solid #ccc;
   padding: 10px;
   width: 300px; /* Or as per your design */
+}
+
+.highlight-list{
+  display: flex;
+}
+
+.highlights-container {
+    margin-top: 20px; /* Adjust the margin-top as needed */
+}
+
+.highlights-container .crypto-item {
+    /* Apply styles similar to the global crypto currencies section */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgb(128, 128, 128);
+    padding: 10px;
+    width: 300px;
+
+}
+
+.highlight-heading {
+    background-color: #f0f0f0; /* Light grey background color */
+    padding: 8px; /* Add padding for better appearance */
+    text-align: center; /* Center the text within the heading */
+    margin-bottom: 10px; /* Adjust margin as needed */
+}
+
+.highlights-container .crypto-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.green-arrow {
+  font-size: 18px;
+  color: green
+}
+
+.red-arrow {
+  font-size: 18px;
+  color: red
 }
 
 .btn-primary {
