@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_decode
 
 from .forms import CustomUserCreationForm, ContactForm, SubscriptionForm
 from .models import Cryptocurrency, Portfolio, Profile, Referal
+from decimal import Decimal
 
 
 def login_view(request):
@@ -285,10 +286,6 @@ def checkout(request):
     api_url = f'https://api.coingecko.com/api/v3/coins/{coin_id}'
     response = requests.get(api_url)
     data = response.json()
-    print(data['id'])
-    print(data['name'])
-    print(data['symbol'])
-    print(data['market_data']['current_price']['usd'])
     crypto = {
         'user': request.user,
         'name': data['name'],
@@ -309,36 +306,34 @@ def checkout_complete(request):
         return HttpResponse("Error in checkout")
 
     ccn = request.POST.get('ccn')
-    '''debug
-    print(f'name: {request.POST.get("cname")}')
-    print(f'sym: {request.POST.get("symbol")}')
-    print(f'id: {request.POST.get("id_from_api")}')
-    print(f'cp: {request.POST.get("current_price")}')
-    print(f'cvv: {request.POST.get("cvv")}')
-    '''
+
     if ccn == '4242424242424242424':
         # ----------------------------------------------------
         # code to update payment history with failed payment
         # ----------------------------------------------------
         return HttpResponse("Error in checkout")
     else:
-
+        user = request.user
         try:
+            curr_crypto = Cryptocurrency.objects.filter(user=user, name=request.POST.get('cname'))[0]
+            print("================> ", curr_crypto)
+            if curr_crypto:
+                curr_crypto.current_price = float(request.POST.get('current_price'))
+                curr_crypto.quantity += int(request.POST.get('quantity'))
+                curr_crypto.save()
+            else:
             # save the crypto currency to the database
-            crypto_currency = Cryptocurrency.objects.create(
-                user=request.user,
-                name=request.POST.get('cname'),
-                id_from_api=request.POST.get('id_from_api'),
-                symbol=request.POST.get('symbol'),
-                quantity=request.POST.get('quantity'),
-                current_price=request.POST.get('current_price'),
-            )
-        except IntegrityError as e:
-            crypto_currency = Cryptocurrency.objects.get(user=request.user, name=request.POST.get('name'))
-            crypto_currency.current_price = float(request.POST.get('current_price'))
-            crypto_currency.quantity += int(request.POST.get('quantity'))
-
-        crypto_currency.save()
+                crypto_currency = Cryptocurrency.objects.create(
+                    user=user,
+                    name=request.POST.get('cname'),
+                    id_from_api=request.POST.get('id_from_api'),
+                    symbol=request.POST.get('symbol'),
+                    quantity=request.POST.get('quantity'),
+                    current_price=request.POST.get('current_price'),
+                )
+                crypto_currency.save()
+        except Exception as e:
+            print(e)
 
         # ----------------------------------------------------
         # code to update payment history with success payment
@@ -351,12 +346,12 @@ def checkout_complete(request):
         # check if the user already has a portfolio
         if Portfolio.objects.filter(user=request.user).exists():
             portfolio = Portfolio.objects.get(user=request.user)
-            portfolio.total_value += total_value
+            portfolio.total_value += Decimal(total_value)
         else:
             portfolio = Portfolio(user=request.user, total_value=total_value)
 
         portfolio.save()
-        messages.success(request, f'{request.POST.get("name")} has been added to your portfolio.')
+        messages.success(request, f'{request.POST.get("cname")} has been added to your portfolio.')
         return redirect('portfolio')
 
 

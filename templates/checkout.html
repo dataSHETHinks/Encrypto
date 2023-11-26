@@ -17,7 +17,7 @@
                 {% csrf_token %}
                 <div class="form-group mb-2">
                     <label for="email">Email</label>
-                    <input type="email" name="email" class="form-control" id="email" required />
+                    <input type="email" name="email" class="form-control" id="email" value="rajput42@uwindsor.ca" required />
                     <div class="invalid-feedback">
                         Please check your email address!
                     </div>
@@ -25,10 +25,10 @@
 
                 <div class="form-group">
                     <label for="ccn">Card Information</label>
-                    <input id="ccn" name="ccn" type="tel" class="form-control mb-1" inputmode="numeric" pattern="[0-9\s]{13,19}" maxlength="19" placeholder="XXXX XXXX XXXX XXXX XXXX" required />
+                    <input id="ccn" name="ccn" type="tel" class="form-control mb-1" inputmode="numeric" pattern="[0-9\s]{13,19}" maxlength="19" placeholder="XXXX XXXX XXXX XXXX XXXX" value="1234123412341234" required />
                     <div class="d-flex align-items-center form-group">
-                        <input id="exp_date" name="exp_date" type="tel" class="w-50 mr-1 form-control" placeholder="MM/YY" pattern="(1[0-2]|0[1-9])\/(1[5-9]|2\d)" required />
-                        <input id="cvv" name="cvv" type="tel" class="w-50 form-control" placeholder="CVV" pattern="\d{3}" required />
+                        <input id="exp_date" name="exp_date" type="tel" class="w-50 mr-1 form-control" placeholder="MM/YY" pattern="(1[0-2]|0[1-9])\/(1[5-9]|2\d)" value="11/23" required />
+                        <input id="cvv" name="cvv" type="tel" class="w-50 form-control" placeholder="CVV" pattern="\d{3}" value="422" required />
                         <div class="invalid-feedback">
                     </div>
                     <div class="invalid-feedback">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group">
                     <label for="card_name">Name on Card</label>
-                    <input id="card_name" name="card_name" type="text" class="form-control" required />
+                    <input id="card_name" name="card_name" type="text" class="form-control" value="Pratikraj Rajput" required />
                 </div>
                 <div class="form-group">
                     <input type="text" id="id_from_api" class="form-control" name="id_from_api" value="{{ crypto.id_from_api }}" />
