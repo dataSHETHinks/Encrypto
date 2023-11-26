@@ -249,14 +249,6 @@ def search_view(request):
         symbol = data.get('symbol')
         market_cap = data.get('market_cap_rank')
         print(coin_id)
-        # check if the crypto currency is already in the users portfolio and pass that information to the template
-        #     current_user = request.user
-        #     is_already_in_portfolio = False
-        #
-        #     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
-        #     for cryptocurrency in user_cryptocurrencies:
-        #         if cryptocurrency.name.lower() == coin_id.lower():
-        #             is_already_in_portfolio = True
 
         cryptocurrency_info = {
             'data': data,
