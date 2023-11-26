@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_decode
 
 from .forms import CustomUserCreationForm, ContactForm, SubscriptionForm
 from .models import Cryptocurrency, Portfolio, Profile, Referal
+from decimal import Decimal
 
 
 def login_view(request):
@@ -30,7 +31,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=raw_password)
             if user is not None:
                 login(request, user)
-                return redirect('portfolio')
+                return redirect('/')
         else:
             messages.error(request, "Invalid username or password.", extra_tags='danger')
     else:
@@ -51,9 +52,10 @@ def signup_view(request):
         return redirect('portfolio')
 
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        print("form is", form)
         if form.is_valid():
+            print("yes")
             user = form.save(commit=False)
             user.password = make_password(form.cleaned_data['password1'])
             user.email = form.cleaned_data['email']
@@ -129,7 +131,6 @@ def portfolio_view(request):
         }
         return render(request, 'portfolio.html', context)
 
-
     if user_portfolio := Portfolio.objects.filter(user=current_user).first():
         portfolio = Portfolio.objects.get(user=current_user)
 
@@ -181,53 +182,81 @@ def portfolio_view(request):
         }
     return render(request, 'portfolio.html', context)
 
+
 def home_view(request):
-    subscription_form = SubscriptionForm()  # Initialize the subscription form
+    # Get the top 10 cryptocurrencies by market cap
+    try:
 
-    # Handle the subscription form submission
-    if request.method == 'POST':
-        subscription_form = SubscriptionForm(request.POST)
-        if subscription_form.is_valid():
-            # Process the subscription here (e.g., save email to database or mailing list)
-            # For demonstration purposes, we're just showing a success message
-            messages.success(request, 'You are all set!')
-            return redirect('home_view')  # Redirect to clear POST data and avoid resubmitting form
+        top_10_crypto_url_global = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true'
+        top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
 
-    # Retrieve the top 10 crypto currencies by market cap
-    top_10_crypto_url_global = ('https://api.coingecko.com/api/v3/coins/markets'
-                                '?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true')
-    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
+        # Get the trending cryptocurrencies
+        trending_crypto_url = 'https://api.coingecko.com/api/v3/search/trending'
+        trending_crypto_data = requests.get(trending_crypto_url).json()
 
-    # Prepare the context for rendering
-    context = {'top_10_crypto_data_global': top_10_crypto_data_global, 'subscription_form': subscription_form}
+        # Get highlights data
+        highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
 
-    # If user is logged in, fetch additional data
-    if request.user.is_authenticated:
-        user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
-        user_portfolio = Portfolio.objects.filter(user=request.user).first()
+        # Get the latest 3 cryptocurrencies based on date added
+        latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
 
-        # Get the prices and price changes for user's cryptocurrencies
-        names = [crypto.name for crypto in user_cryptocurrencies]
-        ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
-        prices = []
+        # Initialize the subscription form
+        subscription_form = SubscriptionForm()
 
-        for crytpo_id in ids:
-            prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}'
-                          f'&vs_currencies=usd&include_24hr_change=true')
-            prices_data = requests.get(prices_url).json()
-            price_change = prices_data[crytpo_id]['usd_24h_change']
-            prices.append(price_change)
+        # Handle the subscription form submission
+        if request.method == 'POST':
+            subscription_form = SubscriptionForm(request.POST)
+            if subscription_form.is_valid():
+                messages.success(request, 'You are all set!')
+                return redirect('home')  # Redirect to clear POST data and avoid resubmitting the form
 
-        crypto_price_changes = dict(zip(names, prices))
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            # Get user's cryptocurrencies and portfolio
+            user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
+            user_portfolio = Portfolio.objects.filter(user=request.user).first()
 
-        # Update the context for authenticated users
-        context.update({
-            'user_cryptocurrencies': user_cryptocurrencies,
-            'user_portfolio': user_portfolio,
-            'crypto_price_changes': crypto_price_changes,
-        })
+            # Get the prices and price changes for user's cryptocurrencies
+            names = [crypto.name for crypto in user_cryptocurrencies]
+            symbols = [crypto.symbol for crypto in user_cryptocurrencies]
+            ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
+            prices = []
 
-    return render(request, 'home.html', context)
+            try:
+                for crypto_id in ids:
+                    prices_url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies=usd&include_24hr_change=true'
+                    prices_data = requests.get(prices_url).json()
+                    price_change = prices_data[crypto_id]['usd_24h_change']
+                    prices.append(price_change)
+            except Exception as e:
+                return redirect('rate_limit_err')
+
+            # Create a dictionary of names and prices
+            crypto_price_changes = dict(zip(names, prices))
+
+            context = {
+                'top_10_crypto_data_global': top_10_crypto_data_global,
+                'user_cryptocurrencies': user_cryptocurrencies,
+                'user_portfolio': user_portfolio,
+                'crypto_price_changes': crypto_price_changes,
+                'highlights_data': highlights_data,
+                'trending_crypto_data': trending_crypto_data,
+                'latest_3_added': latest_3_added,
+                'subscription_form': subscription_form,
+            }
+        else:
+            context = {
+                'top_10_crypto_data_global': top_10_crypto_data_global,
+                'highlights_data': highlights_data,
+                'trending_crypto_data': trending_crypto_data,
+                'latest_3_added': latest_3_added,
+                'subscription_form': subscription_form,  # Add the subscription form to the context
+            }
+
+        return render(request, 'home.html', context)
+    except:
+        return redirect('rate_limit_err')
+
 
 def search_view(request):
     if request.method != 'POST':
@@ -248,14 +277,6 @@ def search_view(request):
         symbol = data.get('symbol')
         market_cap = data.get('market_cap_rank')
         print(coin_id)
-        # check if the crypto currency is already in the users portfolio and pass that information to the template
-        #     current_user = request.user
-        #     is_already_in_portfolio = False
-        #
-        #     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
-        #     for cryptocurrency in user_cryptocurrencies:
-        #         if cryptocurrency.name.lower() == coin_id.lower():
-        #             is_already_in_portfolio = True
 
         cryptocurrency_info = {
             'data': data,
@@ -272,6 +293,86 @@ def search_view(request):
         'search_query': search_query,
     }
     return render(request, 'search.html', {"cryptocurrencies": cryptocurrencies})
+
+
+@login_required(login_url="login")
+def checkout(request):
+    if request.method != 'POST':
+        return HttpResponse("Please select crypto currency to add to your portfolio.")
+
+    coin_id = request.POST.get('id')
+    quantity = request.POST.get('quantity')
+    api_url = f'https://api.coingecko.com/api/v3/coins/{coin_id}'
+    response = requests.get(api_url)
+    data = response.json()
+    crypto = {
+        'user': request.user,
+        'name': data['name'],
+        'id_from_api': coin_id,
+        'symbol': data['symbol'],
+        'current_price': data['market_data']['current_price']['usd'],
+        'quantity': quantity
+    }
+    context = {
+        'crypto': crypto,
+        'amount': float(quantity) * float(crypto['current_price'])
+    }
+    return render(request, 'checkout.html', context)
+
+
+@login_required(login_url="login")
+def checkout_complete(request):
+    if request.method != "POST":
+        return HttpResponse("Error in checkout")
+
+    ccn = request.POST.get('ccn')
+
+    if ccn == '4242424242424242424':
+        # ----------------------------------------------------
+        # code to update payment history with failed payment
+        # ----------------------------------------------------
+        return HttpResponse("Error in checkout")
+    else:
+        user = request.user
+        try:
+            curr_crypto = Cryptocurrency.objects.filter(user=user, name=request.POST.get('cname'))
+            if len(curr_crypto) != 0:
+                curr_crypto = curr_crypto[0]
+                curr_crypto.current_price = float(request.POST.get('current_price'))
+                curr_crypto.quantity += int(request.POST.get('quantity'))
+                curr_crypto.save()
+            else:
+                # save the crypto currency to the database
+                crypto_currency = Cryptocurrency.objects.create(
+                    user=user,
+                    name=request.POST.get('cname'),
+                    id_from_api=request.POST.get('id_from_api'),
+                    symbol=request.POST.get('symbol'),
+                    quantity=request.POST.get('quantity'),
+                    current_price=request.POST.get('current_price'),
+                )
+                crypto_currency.save()
+        except Exception as e:
+            print(e)
+
+        # ----------------------------------------------------
+        # code to update payment history with success payment
+        # ----------------------------------------------------
+
+        # calculate the total value of the crypto currency
+        total_value = float(request.POST.get('quantity')) * float(request.POST.get('current_price'))
+
+        # save the total value of the crypto currency to the database in the portfolio model
+        # check if the user already has a portfolio
+        if Portfolio.objects.filter(user=request.user).exists():
+            portfolio = Portfolio.objects.get(user=request.user)
+            portfolio.total_value += Decimal(total_value)
+        else:
+            portfolio = Portfolio(user=request.user, total_value=total_value)
+
+        portfolio.save()
+        messages.success(request, f'{request.POST.get("cname")} has been added to your portfolio.')
+        return redirect('portfolio')
 
 
 @login_required(login_url="login")
@@ -345,8 +446,6 @@ def delete_from_portfolio_view(request, pk):
     # get the crypto currency object from the database
     crypto_currency = Cryptocurrency.objects.get(pk=pk)
 
-
-
     # delete the crypto currency from the database
     # crypto_currency.delete()
 
@@ -374,11 +473,14 @@ def delete_from_portfolio_view(request, pk):
 def about_us(request):
     return render(request, 'aboutUs.html')
 
+
 def terms_of_service(request):
     return render(request, 'termsAndConditions.html')
 
+
 def privacy_policy(request):
     return render(request, 'privacyPolicy.html')
+
 
 def contact(request):
     if request.method == 'POST':
