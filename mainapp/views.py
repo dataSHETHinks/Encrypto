@@ -330,9 +330,9 @@ def checkout_complete(request):
     else:
         user = request.user
         try:
-            curr_crypto = Cryptocurrency.objects.filter(user=user, name=request.POST.get('cname'))[0]
-            print("================> ", curr_crypto)
-            if curr_crypto:
+            curr_crypto = Cryptocurrency.objects.filter(user=user, name=request.POST.get('cname'))
+            if len(curr_crypto) != 0:
+                curr_crypto = curr_crypto[0]
                 curr_crypto.current_price = float(request.POST.get('current_price'))
                 curr_crypto.quantity += int(request.POST.get('quantity'))
                 curr_crypto.save()
