@@ -38,7 +38,7 @@ class CustomUserCreationForm(UserCreationForm):
         required=True,
         label='Upload a Valid ID or Photo',
         help_text='Required. Upload a valid ID or photo.',
-        widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/jpeg, image/png, image/jpg'})
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/jpeg, image/png, image/jpg'})
     )
 
     class Meta:

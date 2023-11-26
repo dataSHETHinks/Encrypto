@@ -31,7 +31,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=raw_password)
             if user is not None:
                 login(request, user)
-                return redirect('portfolio')
+                return redirect('/')
         else:
             messages.error(request, "Invalid username or password.", extra_tags='danger')
     else:
@@ -52,9 +52,10 @@ def signup_view(request):
         return redirect('portfolio')
 
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        print("form is", form)
         if form.is_valid():
+            print("yes")
             user = form.save(commit=False)
             user.password = make_password(form.cleaned_data['password1'])
             user.email = form.cleaned_data['email']
@@ -183,50 +184,72 @@ def portfolio_view(request):
 
 
 def home_view(request):
-    subscription_form = SubscriptionForm()  # Initialize the subscription form
+    # Get the top 10 cryptocurrencies by market cap
+    top_10_crypto_url_global = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true'
+    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
+
+    # Get the trending cryptocurrencies
+    trending_crypto_url = 'https://api.coingecko.com/api/v3/search/trending'
+    trending_crypto_data = requests.get(trending_crypto_url).json()
+
+    # Get highlights data
+    highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
+
+    # Get the latest 3 cryptocurrencies based on date added
+    latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
+
+    # Initialize the subscription form
+    subscription_form = SubscriptionForm()
 
     # Handle the subscription form submission
     if request.method == 'POST':
         subscription_form = SubscriptionForm(request.POST)
         if subscription_form.is_valid():
-            # Process the subscription here (e.g., save email to database or mailing list)
-            # For demonstration purposes, we're just showing a success message
             messages.success(request, 'You are all set!')
-            return redirect('home_view')  # Redirect to clear POST data and avoid resubmitting form
+            return redirect('home_view')  # Redirect to clear POST data and avoid resubmitting the form
 
-    # Retrieve the top 10 crypto currencies by market cap
-    top_10_crypto_url_global = ('https://api.coingecko.com/api/v3/coins/markets'
-                                '?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true')
-    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
-
-    # Prepare the context for rendering
-    context = {'top_10_crypto_data_global': top_10_crypto_data_global, 'subscription_form': subscription_form}
-
-    # If user is logged in, fetch additional data
+    # Check if the user is authenticated
     if request.user.is_authenticated:
+        # Get user's cryptocurrencies and portfolio
         user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
         user_portfolio = Portfolio.objects.filter(user=request.user).first()
 
         # Get the prices and price changes for user's cryptocurrencies
         names = [crypto.name for crypto in user_cryptocurrencies]
+        symbols = [crypto.symbol for crypto in user_cryptocurrencies]
         ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
         prices = []
 
-        for crytpo_id in ids:
-            prices_url = (f'https://api.coingecko.com/api/v3/simple/price?ids={crytpo_id}'
-                          f'&vs_currencies=usd&include_24hr_change=true')
-            prices_data = requests.get(prices_url).json()
-            price_change = prices_data[crytpo_id]['usd_24h_change']
-            prices.append(price_change)
+        try:
+            for crypto_id in ids:
+                prices_url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies=usd&include_24hr_change=true'
+                prices_data = requests.get(prices_url).json()
+                price_change = prices_data[crypto_id]['usd_24h_change']
+                prices.append(price_change)
+        except Exception as e:
+            return redirect('rate_limit_err')
 
+        # Create a dictionary of names and prices
         crypto_price_changes = dict(zip(names, prices))
 
-        # Update the context for authenticated users
-        context.update({
+        context = {
+            'top_10_crypto_data_global': top_10_crypto_data_global,
             'user_cryptocurrencies': user_cryptocurrencies,
             'user_portfolio': user_portfolio,
             'crypto_price_changes': crypto_price_changes,
-        })
+            'highlights_data': highlights_data,
+            'trending_crypto_data': trending_crypto_data,
+            'latest_3_added': latest_3_added,
+            'subscription_form': subscription_form,
+        }
+    else:
+        context = {
+            'top_10_crypto_data_global': top_10_crypto_data_global,
+            'highlights_data': highlights_data,
+            'trending_crypto_data': trending_crypto_data,
+            'latest_3_added': latest_3_added,
+            'subscription_form': subscription_form,  # Add the subscription form to the context
+        }
 
     return render(request, 'home.html', context)
 
@@ -250,14 +273,6 @@ def search_view(request):
         symbol = data.get('symbol')
         market_cap = data.get('market_cap_rank')
         print(coin_id)
-        # check if the crypto currency is already in the users portfolio and pass that information to the template
-        #     current_user = request.user
-        #     is_already_in_portfolio = False
-        #
-        #     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
-        #     for cryptocurrency in user_cryptocurrencies:
-        #         if cryptocurrency.name.lower() == coin_id.lower():
-        #             is_already_in_portfolio = True
 
         cryptocurrency_info = {
             'data': data,
