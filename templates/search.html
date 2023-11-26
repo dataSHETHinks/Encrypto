@@ -1,9 +1,20 @@
 {% extends 'base.html' %} {% block title %} Search Results {% endblock title %}
 {% block content %}
+<style>
+  .currency-card {
+    background-color: #dfe0e2;
+  }
 
+  .currency-card:hover {
+    transition: transform 0.2s;
+    transform: scale(1.1);
+    z-index: 100;
+    cursor: pointer;
+  }
+</style>
 <div class="text-white border-0 d-flex flex-wrap flex-lg-row mx-auto mt-5">
   {% for cryptocurrency in cryptocurrencies %}
-  <div class="card mb-3 text-center border-1 mx-auto">
+  <div class="card mb-3 text-center border-1 mx-auto currency-card">
     <div class="row justify-content-center align-items-center p-5">
       <div class="col-md-4">
         <img

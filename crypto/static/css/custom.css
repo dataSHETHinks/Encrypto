@@ -223,3 +223,7 @@ tbody tr:hover {
   background-color: #007bff; /* Bootstrap primary color */
   border-color: #007bff;
 }
+
+.currency-card:hover {
+  transform: translate(105%);
+}
