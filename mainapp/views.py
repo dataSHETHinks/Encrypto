@@ -185,73 +185,77 @@ def portfolio_view(request):
 
 def home_view(request):
     # Get the top 10 cryptocurrencies by market cap
-    top_10_crypto_url_global = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true'
-    top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
+    try:
 
-    # Get the trending cryptocurrencies
-    trending_crypto_url = 'https://api.coingecko.com/api/v3/search/trending'
-    trending_crypto_data = requests.get(trending_crypto_url).json()
+        top_10_crypto_url_global = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=10&page=1&sparkline=true'
+        top_10_crypto_data_global = requests.get(top_10_crypto_url_global).json()
 
-    # Get highlights data
-    highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
+        # Get the trending cryptocurrencies
+        trending_crypto_url = 'https://api.coingecko.com/api/v3/search/trending'
+        trending_crypto_data = requests.get(trending_crypto_url).json()
 
-    # Get the latest 3 cryptocurrencies based on date added
-    latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
+        # Get highlights data
+        highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
 
-    # Initialize the subscription form
-    subscription_form = SubscriptionForm()
+        # Get the latest 3 cryptocurrencies based on date added
+        latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
 
-    # Handle the subscription form submission
-    if request.method == 'POST':
-        subscription_form = SubscriptionForm(request.POST)
-        if subscription_form.is_valid():
-            messages.success(request, 'You are all set!')
-            return redirect('home_view')  # Redirect to clear POST data and avoid resubmitting the form
+        # Initialize the subscription form
+        subscription_form = SubscriptionForm()
 
-    # Check if the user is authenticated
-    if request.user.is_authenticated:
-        # Get user's cryptocurrencies and portfolio
-        user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
-        user_portfolio = Portfolio.objects.filter(user=request.user).first()
+        # Handle the subscription form submission
+        if request.method == 'POST':
+            subscription_form = SubscriptionForm(request.POST)
+            if subscription_form.is_valid():
+                messages.success(request, 'You are all set!')
+                return redirect('home')  # Redirect to clear POST data and avoid resubmitting the form
 
-        # Get the prices and price changes for user's cryptocurrencies
-        names = [crypto.name for crypto in user_cryptocurrencies]
-        symbols = [crypto.symbol for crypto in user_cryptocurrencies]
-        ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
-        prices = []
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            # Get user's cryptocurrencies and portfolio
+            user_cryptocurrencies = Cryptocurrency.objects.filter(user=request.user)
+            user_portfolio = Portfolio.objects.filter(user=request.user).first()
 
-        try:
-            for crypto_id in ids:
-                prices_url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies=usd&include_24hr_change=true'
-                prices_data = requests.get(prices_url).json()
-                price_change = prices_data[crypto_id]['usd_24h_change']
-                prices.append(price_change)
-        except Exception as e:
-            return redirect('rate_limit_err')
+            # Get the prices and price changes for user's cryptocurrencies
+            names = [crypto.name for crypto in user_cryptocurrencies]
+            symbols = [crypto.symbol for crypto in user_cryptocurrencies]
+            ids = [crypto.id_from_api for crypto in user_cryptocurrencies]
+            prices = []
 
-        # Create a dictionary of names and prices
-        crypto_price_changes = dict(zip(names, prices))
+            try:
+                for crypto_id in ids:
+                    prices_url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies=usd&include_24hr_change=true'
+                    prices_data = requests.get(prices_url).json()
+                    price_change = prices_data[crypto_id]['usd_24h_change']
+                    prices.append(price_change)
+            except Exception as e:
+                return redirect('rate_limit_err')
 
-        context = {
-            'top_10_crypto_data_global': top_10_crypto_data_global,
-            'user_cryptocurrencies': user_cryptocurrencies,
-            'user_portfolio': user_portfolio,
-            'crypto_price_changes': crypto_price_changes,
-            'highlights_data': highlights_data,
-            'trending_crypto_data': trending_crypto_data,
-            'latest_3_added': latest_3_added,
-            'subscription_form': subscription_form,
-        }
-    else:
-        context = {
-            'top_10_crypto_data_global': top_10_crypto_data_global,
-            'highlights_data': highlights_data,
-            'trending_crypto_data': trending_crypto_data,
-            'latest_3_added': latest_3_added,
-            'subscription_form': subscription_form,  # Add the subscription form to the context
-        }
+            # Create a dictionary of names and prices
+            crypto_price_changes = dict(zip(names, prices))
 
-    return render(request, 'home.html', context)
+            context = {
+                'top_10_crypto_data_global': top_10_crypto_data_global,
+                'user_cryptocurrencies': user_cryptocurrencies,
+                'user_portfolio': user_portfolio,
+                'crypto_price_changes': crypto_price_changes,
+                'highlights_data': highlights_data,
+                'trending_crypto_data': trending_crypto_data,
+                'latest_3_added': latest_3_added,
+                'subscription_form': subscription_form,
+            }
+        else:
+            context = {
+                'top_10_crypto_data_global': top_10_crypto_data_global,
+                'highlights_data': highlights_data,
+                'trending_crypto_data': trending_crypto_data,
+                'latest_3_added': latest_3_added,
+                'subscription_form': subscription_form,  # Add the subscription form to the context
+            }
+
+        return render(request, 'home.html', context)
+    except:
+        return redirect('rate_limit_err')
 
 
 def search_view(request):
@@ -315,6 +319,7 @@ def checkout(request):
     }
     return render(request, 'checkout.html', context)
 
+
 @login_required(login_url="login")
 def checkout_complete(request):
     if request.method != "POST":
@@ -337,7 +342,7 @@ def checkout_complete(request):
                 curr_crypto.quantity += int(request.POST.get('quantity'))
                 curr_crypto.save()
             else:
-            # save the crypto currency to the database
+                # save the crypto currency to the database
                 crypto_currency = Cryptocurrency.objects.create(
                     user=user,
                     name=request.POST.get('cname'),
