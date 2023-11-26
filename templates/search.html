@@ -24,12 +24,12 @@
                 <hr class="border-white">
               </div>
             {% endif %}
-            <form action="{% url 'add_to_portfolio' %}" method="post" class="d-inline-block">
+            <form action="{% url 'checkout' %}" method="post" class="d-inline-block">
               {% csrf_token %}
               <input type="hidden" name="id" value="{{ cryptocurrency.coin_id }}">
-              <label class="mr-2 font-weight-bold text-uppercase">Units Owned</label>
+              <label class="mr-2 font-weight-bold text-uppercase">Units to Buy</label>
               <input type="number" name="quantity" min="1" max="500" value="1" class="form-control d-inline-block w-auto mr-2 mb-2"><br>
-              <button type="submit" class="btn btn-primary text-uppercase">Add to Portfolio</button>
+              <button type="submit" class="btn btn-primary text-uppercase">Go to Checkout</button>
             </form>
           </div>
         </div>

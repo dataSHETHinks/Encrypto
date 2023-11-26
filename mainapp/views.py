@@ -129,7 +129,6 @@ def portfolio_view(request):
         }
         return render(request, 'portfolio.html', context)
 
-
     if user_portfolio := Portfolio.objects.filter(user=current_user).first():
         portfolio = Portfolio.objects.get(user=current_user)
 
@@ -181,6 +180,7 @@ def portfolio_view(request):
         }
     return render(request, 'portfolio.html', context)
 
+
 def home_view(request):
     subscription_form = SubscriptionForm()  # Initialize the subscription form
 
@@ -229,6 +229,7 @@ def home_view(request):
 
     return render(request, 'home.html', context)
 
+
 def search_view(request):
     if request.method != 'POST':
         # return HTTP status code 405 if the request method is not POST along with a message
@@ -272,6 +273,91 @@ def search_view(request):
         'search_query': search_query,
     }
     return render(request, 'search.html', {"cryptocurrencies": cryptocurrencies})
+
+
+@login_required(login_url="login")
+def checkout(request):
+    if request.method != 'POST':
+        return HttpResponse("Please select crypto currency to add to your portfolio.")
+
+    coin_id = request.POST.get('id')
+    quantity = request.POST.get('quantity')
+    api_url = f'https://api.coingecko.com/api/v3/coins/{coin_id}'
+    response = requests.get(api_url)
+    data = response.json()
+    print(data['id'])
+    print(data['name'])
+    print(data['symbol'])
+    print(data['market_data']['current_price']['usd'])
+    crypto = {
+        'user': request.user,
+        'name': data['name'],
+        'id_from_api': coin_id,
+        'symbol': data['symbol'],
+        'current_price': data['market_data']['current_price']['usd'],
+        'quantity': quantity
+    }
+    context = {
+        'crypto': crypto,
+        'amount': float(quantity) * float(crypto['current_price'])
+    }
+    return render(request, 'checkout.html', context)
+
+@login_required(login_url="login")
+def checkout_complete(request):
+    if request.method != "POST":
+        return HttpResponse("Error in checkout")
+
+    ccn = request.POST.get('ccn')
+    '''debug
+    print(f'name: {request.POST.get("cname")}')
+    print(f'sym: {request.POST.get("symbol")}')
+    print(f'id: {request.POST.get("id_from_api")}')
+    print(f'cp: {request.POST.get("current_price")}')
+    print(f'cvv: {request.POST.get("cvv")}')
+    '''
+    if ccn == '4242424242424242424':
+        # ----------------------------------------------------
+        # code to update payment history with failed payment
+        # ----------------------------------------------------
+        return HttpResponse("Error in checkout")
+    else:
+
+        try:
+            # save the crypto currency to the database
+            crypto_currency = Cryptocurrency.objects.create(
+                user=request.user,
+                name=request.POST.get('cname'),
+                id_from_api=request.POST.get('id_from_api'),
+                symbol=request.POST.get('symbol'),
+                quantity=request.POST.get('quantity'),
+                current_price=request.POST.get('current_price'),
+            )
+        except IntegrityError as e:
+            crypto_currency = Cryptocurrency.objects.get(user=request.user, name=request.POST.get('name'))
+            crypto_currency.current_price = float(request.POST.get('current_price'))
+            crypto_currency.quantity += int(request.POST.get('quantity'))
+
+        crypto_currency.save()
+
+        # ----------------------------------------------------
+        # code to update payment history with success payment
+        # ----------------------------------------------------
+
+        # calculate the total value of the crypto currency
+        total_value = float(request.POST.get('quantity')) * float(request.POST.get('current_price'))
+
+        # save the total value of the crypto currency to the database in the portfolio model
+        # check if the user already has a portfolio
+        if Portfolio.objects.filter(user=request.user).exists():
+            portfolio = Portfolio.objects.get(user=request.user)
+            portfolio.total_value += total_value
+        else:
+            portfolio = Portfolio(user=request.user, total_value=total_value)
+
+        portfolio.save()
+        messages.success(request, f'{request.POST.get("name")} has been added to your portfolio.')
+        return redirect('portfolio')
 
 
 @login_required(login_url="login")
@@ -345,8 +431,6 @@ def delete_from_portfolio_view(request, pk):
     # get the crypto currency object from the database
     crypto_currency = Cryptocurrency.objects.get(pk=pk)
 
-
-
     # delete the crypto currency from the database
     # crypto_currency.delete()
 
@@ -374,11 +458,14 @@ def delete_from_portfolio_view(request, pk):
 def about_us(request):
     return render(request, 'aboutUs.html')
 
+
 def terms_of_service(request):
     return render(request, 'termsAndConditions.html')
 
+
 def privacy_policy(request):
     return render(request, 'privacyPolicy.html')
+
 
 def contact(request):
     if request.method == 'POST':
