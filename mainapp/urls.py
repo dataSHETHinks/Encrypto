@@ -20,23 +20,26 @@ urlpatterns = [
     path("search/", views.search_view, name="search"),
     path("add_to_portfolio/", views.add_to_portfolio_view, name="add_to_portfolio"),
     path('delete_from_portfolio/<int:pk>/', views.delete_from_portfolio_view, name='delete_from_portfolio'),
-    
+
+    # Checkout
+    path("checkout/", views.checkout, name="checkout"),
+    path("checkout/complete/", views.checkout_complete, name="checkout_complete"),
+
     # password reset stuff
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name="reset/password_reset.html"), name='password_reset'),
-    
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name="reset/password_reset_done.html"), name='password_reset_done'),
-    
     path('password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
     template_name='reset/password_reset_confirm.html'), name='password_reset_confirm'),
-
     path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(
     template_name='reset/password_reset_complete.html'), name='password_reset_complete'),
 
-
+    # Footer
     path('about-us', views.about_us, name = "about_us"),
     path('terms-and-conditions', views.terms_of_service, name = "terms_of_service"),
     path('privacy-policy', views.privacy_policy, name = 'privacy_policy'),
     path('contact-us', views.contact, name = 'contact'),
+
+    # Error Handling
     path('rate_limit_err/', views.rate_limit_err, name="rate_limit_err")
 ]
 

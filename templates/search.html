@@ -35,56 +35,25 @@
             </p>
           </h5>
 
-          <p class="card-text text-uppercase mb-2">
-            <small><b>MARKET CAP:</b> {{ cryptocurrency.market_cap }}</small>
-          </p>
-          {% if cryptocurrency.is_already_in_portfolio %}
-          <div class="card-body">
-            <p class="card-text text-uppercase mb-0">
-              <small
-                >{{ cryptocurrency.coin_id }} is already in your
-                portfolio.</small
-              >
-            </p>
-            <p class="card-text">
-              <small
-                >Any changes to the quantity will be reflected in your
-                portfolio. Units will be added to the existing quantity.</small
-              >
-            </p>
-            <hr class="border-white" />
+            <p class="card-text text-uppercase mb-2"><small><b>MARKET CAP:</b> {{ cryptocurrency.market_cap }}</small></p>
+            {% if cryptocurrency.is_already_in_portfolio %}
+              <div class="card-body">
+                <p class="card-text text-uppercase mb-0"><small>{{ cryptocurrency.coin_id }} is already in your portfolio.</small></p>
+                <p class="card-text"><small>Any changes to the quantity will be reflected in your portfolio. Units will be added to the existing quantity.</small></p>
+                <hr class="border-white">
+              </div>
+            {% endif %}
+            <form action="{% url 'checkout' %}" method="post" class="d-inline-block">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{ cryptocurrency.coin_id }}">
+              <label class="mr-2 font-weight-bold text-uppercase">Units to Buy</label>
+              <input type="number" name="quantity" min="1" max="500" value="1" class="form-control d-inline-block w-auto mr-2 mb-2"><br>
+              <button type="submit" class="btn btn-primary text-uppercase">Go to Checkout</button>
+            </form>
           </div>
-          {% endif %}
-          <form
-            action="{% url 'add_to_portfolio' %}"
-            method="post"
-            class="d-inline-block"
-          >
-            {% csrf_token %}
-            <input
-              type="hidden"
-              name="id"
-              value="{{ cryptocurrency.coin_id }}"
-            />
-            <label class="mr-2 font-weight-bold text-uppercase"
-              >Units Owned</label
-            >
-            <input
-              type="number"
-              name="quantity"
-              min="1"
-              max="500"
-              value="1"
-              class="form-control d-inline-block w-auto mr-2 mb-2"
-            /><br />
-            <button type="submit" class="btn btn-primary text-uppercase">
-              Buy Now
-            </button>
-          </form>
         </div>
       </div>
     </div>
-  </div>
   {% endfor %}
 </div>
 
