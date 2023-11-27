@@ -7,24 +7,14 @@ User._meta.get_field('email')._unique = True
 # Make the profile for a user, automatically created when a user is created using Django signals
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    referral_code = models.CharField(max_length=10, unique=True)
-    bonus = models.IntegerField(default=0)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} profile'
 
-# Create the referal model
-class Referal(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    referrer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals')
-
-    def __str__(self):
-        return f'{self.user.username} was referred by {self.referrer.username}'
 
 # Create the Cryptocurrency model
 class Cryptocurrency(models.Model):
-    # here name is also the id of the cryptocurrency, so useful for API calls
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cryptocurrencies', null=True)
     id_from_api = models.CharField(max_length=50)
     name = models.CharField(max_length=50) 

@@ -11,7 +11,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     
     path("signup/", views.signup_view, name="signup"),
-    path('signup/<str:referral_code>/', views.signup_with_referrer_view, name='signup_with_referrer_view'),
+
 
     # wallet page
     path("portfolio/", views.portfolio_view, name="portfolio"),

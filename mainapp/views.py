@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 from .forms import CustomUserCreationForm, ContactForm, SubscriptionForm
-from .models import Cryptocurrency, Portfolio, Profile, Referal, PaymentHistory
+from .models import Cryptocurrency, Portfolio, Profile, PaymentHistory
 from decimal import Decimal
 
 
@@ -69,57 +69,12 @@ def signup_view(request):
     return render(request, 'signup.html', {'form': form})
 
 
-# block access to signup page if user is already logged in
-def signup_with_referrer_view(request, referral_code):
-    # check if user is already logged in
-    if request.user.is_authenticated:
-        return redirect('portfolio')
-
-    try:
-        # get the User Profile of the referrer
-        referrer = User.objects.get(profile__referral_code=referral_code)
-    except User.DoesNotExist:
-        # show error message if referrer does not exist
-        return HttpResponse("Referrer does not exist")
-
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.password = make_password(form.cleaned_data['password1'])
-            user.email = form.cleaned_data['email']
-            user.save()
-            # create a referral instance
-            referral = Referal.objects.create(user=user, referrer=referrer)
-            referral.save()
-
-            if referrer is not None:
-                referrer.profile.bonus += 100  # add referral bonus to referrer
-                referrer.profile.save()
-                messages.success(request,
-                                 f'{referrer.username} recieved a bonus of 100 points from you because you signed up using their referral link!')
-
-            messages.success(request, 'You have successfully signed up!')
-            return redirect('login')
-    else:
-        form = CustomUserCreationForm()
-
-    return render(request, 'signup.html', {'form': form, 'referrer': referrer})
-
 
 @login_required(login_url="login")
 def portfolio_view(request):
     # get the current logged in user
     current_user = request.user
 
-    # get the referal code of the current user
-    referral_code = current_user.profile.referral_code
-
-    # get a list of all users who have the current user as their referrer
-    referrals = Referal.objects.filter(referrer=current_user)
-
-    # get total bonus earned by the current user
-    total_bonus = current_user.profile.bonus
 
     # get the list of cryptocurrencies owned by the current user
     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
@@ -199,9 +154,6 @@ def home_view(request):
         # Get highlights data
         highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
 
-        # Get the latest 3 cryptocurrencies based on date added
-        latest_3_added = Cryptocurrency.objects.all().order_by('-id')[:3]
-
         # Initialize the subscription form
         subscription_form = SubscriptionForm()
 
@@ -243,7 +195,6 @@ def home_view(request):
                 'crypto_price_changes': crypto_price_changes,
                 'highlights_data': highlights_data,
                 'trending_crypto_data': trending_crypto_data,
-                'latest_3_added': latest_3_added,
                 'subscription_form': subscription_form,
             }
         else:
@@ -251,7 +202,6 @@ def home_view(request):
                 'top_10_crypto_data_global': top_10_crypto_data_global,
                 'highlights_data': highlights_data,
                 'trending_crypto_data': trending_crypto_data,
-                'latest_3_added': latest_3_added,
                 'subscription_form': subscription_form,  # Add the subscription form to the context
             }
 
@@ -286,7 +236,7 @@ def search_view(request):
             'image': image,
             'symbol': symbol,
             'market_cap': market_cap,
-            # 'is_already_in_portfolio': is_already_in_portfolio,
+
         }
 
         cryptocurrencies.append(cryptocurrency_info)
