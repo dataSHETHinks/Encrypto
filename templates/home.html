@@ -234,7 +234,7 @@
                         <h5 class="card-title">Dive into the digital currency deep with Encrypto: Stay updated, stay
                             ahead.</h5>
 
-                        <form method="post" action="{% url 'home' %}">
+                        <form method="post" action="{% url 'home' %}" style="max-width: 400px">
                             {% csrf_token %}
                             <div class="form-group">
                                 {{ subscription_form.email.label_tag }}
