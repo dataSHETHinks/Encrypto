@@ -340,7 +340,7 @@ def checkout_complete(request):
         quantity=request.POST.get('quantity'),
         success_flag=False
     )
-    if ccn == '4242424242424242424':
+    if ccn == '4242424242424242':
         record.save()
         return HttpResponse("Error in checkout")
     else:

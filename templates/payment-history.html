@@ -1,40 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Home
+{% endblock title %}
+{% block content %}
 
 <h1>Payment History</h1>
 
-<table border="1">
-    <thead>
+<table class="table table-bordered table-hover">
+    <thead class="thead-light">
         <tr>
             <th>User</th>
             <th>Payment Date</th>
             <th>Amount</th>
-            <th>ID from API</th>
             <th>Name</th>
             <th>Quantity</th>
-            <th>Success Flag</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         {% for entry in history %}
-            <tr>
+            <tr style="background-color: {% if not entry.success_flag %}lightcoral{% endif %}">
                 <td>{{ entry.user.username }}</td>
                 <td>{{ entry.payment_date }}</td>
                 <td>{{ entry.amount }}</td>
-                <td>{{ entry.id_from_api }}</td>
                 <td>{{ entry.name }}</td>
                 <td>{{ entry.quantity }}</td>
-                <td>{% if entry.success_flag %}Yes{% else %}No{% endif %}</td>
+                <td>{% if entry.success_flag %}SUCCESS{% else %}FAILED{% endif %}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+    <p><a class="btn btn-primary" href="{% url 'portfolio' %}">Back to portfolio</a></p>
+{% endblock content %}
 
-</body>
-</html>
+{% block scripts %}
+{% endblock scripts %}
