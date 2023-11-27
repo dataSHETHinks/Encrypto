@@ -43,7 +43,7 @@
 
 
     <!-- TOP 3 CURRENCIES -->
-    <div class="crypto-item">
+    <div class="crypto-item d-flex flex-column p-4">
         <h3 ><img src="{% static 'top3.png' %}" alt="Logo" height="26px" /> Top 3</h3>
         <table class="table" style="background-color: #f0f0f0;">
             <thead style="background-color: dimgray;color: whitesmoke;">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Fear & Greed Index -->
-    <div class="crypto-item" >
+    <div class="crypto-item  d-flex flex-column p-4" >
         <h3>Fear & Greed Index</h3>
         <img src="{% static 'fear.png' %}" alt="Logo" width="280" height="170"/>
     </div>
@@ -76,7 +76,7 @@
     <div class="row justify-content-center">
         <div class="flex-container trending-container">
             <!-- Display the trending cryptocurrencies -->
-            <div class="crypto-item">
+            <div class="crypto-item  d-flex flex-column p-4">
 
                 <h3>
                     <img src="{% static 'trending.png' %}" alt="Logo" height="22px" width="22px"/>
@@ -113,7 +113,7 @@
         <div class="row justify-content-center">
             {#    <h2 class="text-center custom-heading">Search Cryptocurrency</h2>#}
         </div>
-        <div class="row mt-3 justify-content-end" style="color: #A6B0C3;">
+        <div class="row mt-3 justify-content-start" style="color: #A6B0C3;">
             <div class="col-md-6 col-lg-4">
                 <form action="{% url 'search' %}" method="post">
                     {% csrf_token %}
