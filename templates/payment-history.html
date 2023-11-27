@@ -1,10 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
 </head>
 <body>
-$END$
+
+<h1>Payment History</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Payment Date</th>
+            <th>Amount</th>
+            <th>ID from API</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Success Flag</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in history %}
+            <tr>
+                <td>{{ entry.user.username }}</td>
+                <td>{{ entry.payment_date }}</td>
+                <td>{{ entry.amount }}</td>
+                <td>{{ entry.id_from_api }}</td>
+                <td>{{ entry.name }}</td>
+                <td>{{ entry.quantity }}</td>
+                <td>{% if entry.success_flag %}Yes{% else %}No{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 </body>
 </html>

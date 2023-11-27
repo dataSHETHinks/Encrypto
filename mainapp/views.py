@@ -12,9 +12,11 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.utils.http import urlsafe_base64_decode
+from datetime import datetime
+
 
 from .forms import CustomUserCreationForm, ContactForm, SubscriptionForm
-from .models import Cryptocurrency, Portfolio, Profile, Referal
+from .models import Cryptocurrency, Portfolio, Profile, Referal, PaymentHistory
 from decimal import Decimal
 
 
@@ -326,11 +328,20 @@ def checkout_complete(request):
         return HttpResponse("Error in checkout")
 
     ccn = request.POST.get('ccn')
+    now = datetime.now()
 
+    current_time = now.strftime("%H:%M:%S")
+    record = PaymentHistory.objects.create(
+        user=request.user,
+        payment_date= current_time ,
+        amount= float(request.POST.get('quantity')) * float(request.POST.get('current_price')),
+        id_from_api=request.POST.get('id_from_api'),
+        name=request.POST.get('cname'),
+        quantity=request.POST.get('quantity'),
+        success_flag=False
+    )
     if ccn == '4242424242424242424':
-        # ----------------------------------------------------
-        # code to update payment history with failed payment
-        # ----------------------------------------------------
+        record.save()
         return HttpResponse("Error in checkout")
     else:
         user = request.user
@@ -371,6 +382,8 @@ def checkout_complete(request):
             portfolio = Portfolio(user=request.user, total_value=total_value)
 
         portfolio.save()
+        record.success_flag = True
+        record.save()
         messages.success(request, f'{request.POST.get("cname")} has been added to your portfolio.')
         return redirect('portfolio')
 
@@ -499,3 +512,10 @@ def contact(request):
 
 def rate_limit_err(request):
     return render(request, 'rate_limit.html')
+
+@login_required(login_url='login')
+def payment_history_view(request):
+    print("Hi", request.user)
+    history = PaymentHistory.objects.filter(user=request.user)
+    print("history", history)
+    return render(request, 'payment-history.html', {'history' : history })
