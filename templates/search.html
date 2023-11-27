@@ -47,7 +47,7 @@
               {% csrf_token %}
               <input type="hidden" name="id" value="{{ cryptocurrency.coin_id }}">
               <label class="mr-2 font-weight-bold text-uppercase">Units to Buy</label>
-              <input type="number" name="quantity" min="1" max="500" value="1" class="form-control d-inline-block w-auto mr-2 mb-2"><br>
+              <input type="number" name="quantity" step="0.01" min="0.01" max="500" value="1.00" class="form-control d-inline-block w-auto mr-2 mb-2"><br>
               <button type="submit" class="btn btn-primary text-uppercase">Go to Checkout</button>
             </form>
           </div>

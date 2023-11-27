@@ -40,14 +40,14 @@
                     <label for="card_name">Name on Card</label>
                     <input id="card_name" name="card_name" type="text" class="form-control" value="Pratikraj Rajput" required />
                 </div>
-                <div class="form-group">
+                <div class="d-none form-group">
                     <input type="text" id="id_from_api" class="form-control" name="id_from_api" value="{{ crypto.id_from_api }}" />
                     <input type="text" id="cname" class="form-control" name="cname" value="{{ crypto.name }}" />
                     <input type="text" id="symbol" class="form-control" name="symbol"  value="{{ crypto.symbol }}" />
                     <input type="number" id="current_price" class="form-control" name="current_price" value="{{ crypto.current_price }}" />
                     <input type="number" id="quantity" class="form-control" name="quantity" value="{{ crypto.quantity }}" />
                 </div>
-                <input type="submit" class="w-100 text-center btn p-2 bg-dark text-light " value="Pay ${{ amount }}" />
+                <input type="submit" class="w-100 text-center btn p-2 bg-dark text-light " value="Pay ${{ amount | floatformat:2 }}" />
             </form>
         </div>
     </section>
