@@ -1,14 +1,10 @@
 from django.contrib import admin
-from .models import Cryptocurrency, Portfolio, Profile, Referal, PaymentHistory
+from .models import Cryptocurrency, Portfolio, Profile, PaymentHistory
 
-
-@admin.register(Referal)
-class ReferalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'referrer')
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'referral_code', 'bonus')
+    list_display = ['user']
 
 @admin.register(Cryptocurrency)
 class CryptocurrencyAdmin(admin.ModelAdmin):
