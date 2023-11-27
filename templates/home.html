@@ -17,12 +17,6 @@
         {% endfor %}
     {% endif %}
 
-    {% if user.is_authenticated %}
-        <div class="row justify-content-left custom-title">
-            <h2 class="text-uppercase welcome-user-text">Welcome {{ user.username | capfirst }} </h2>
-        </div>
-    {% endif %}
-
  <h3>Today's Cryptocurrency Prices by Market Cap
     </h3>
   The global crypto market cap is $1.44T

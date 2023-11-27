@@ -36,10 +36,9 @@
     <ul class="navbar-nav">
       {% if user.is_authenticated %}
       <div class="d-flex flex-sm-column align-items-center">
-        <p class="text-white mt-3 mr-3 font-bold">Welcome {{ user.username | capfirst }}</p>
           <div class="dropdown mr-1">
             <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="-50,10">
-              Profile
+              {{ user.username | capfirst }}
             </button>
             <div class="dropdown-menu custom-dropdown-menu">
                 <a class="btn my-2 my-sm-0 mr-2 custom-portfolio-link" href="{% url 'portfolio' %}" >View My Wallet</a>
