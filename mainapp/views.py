@@ -435,25 +435,30 @@ def add_to_portfolio_view(request):
 @login_required(login_url="login")
 def delete_from_portfolio_view(request, pk):
     # get the current logged in user
+    if request.method != 'POST':
+        messages.warning(request, f'Invalid information! Please validate before selling!')
+        return redirect('portfolio')
+
     user = request.user
-    sp = request.GET.get('sp', None)
+    sp = request.POST.get('sp')
     if sp is None:
-        # Do something with sp_value
         messages.warning(request, f'Failed to obtain selling price!')
         return redirect('portfolio')
     sp = float(sp)
+    quantity = request.POST.get('quantity')
 
     # get the crypto currency object from the database
-    crypto_currency = Cryptocurrency.objects.get(pk=pk)
-
-    # delete the crypto currency from the database
-    # crypto_currency.delete()
+    crypto_currency = Cryptocurrency.objects.get(pk=pk, user=request.user)
+    crypto_currency.quantity = float(crypto_currency.quantity) - float(quantity)
 
     # update the total value of the portfolio
     portfolio = Portfolio.objects.get(user=user)
-    portfolio.total_value = float(portfolio.total_value) - (float(crypto_currency.quantity) * sp)
+    portfolio.total_value = float(portfolio.total_value) - (float(quantity) * sp)
 
-    crypto_currency.delete()
+    if crypto_currency.quantity == 0:
+        crypto_currency.delete()
+    else:
+        crypto_currency.save()
     portfolio.save()
 
     # get all the crypto currencies in the portfolio and recalculate the total value of the portfolio
@@ -465,7 +470,7 @@ def delete_from_portfolio_view(request, pk):
     # portfolio.save()
 
     # send an alert to the user that the crypto currency has been deleted from the portfolio
-    messages.warning(request, f'{crypto_currency.name} has been deleted from your portfolio.')
+    messages.warning(request, f'You sold {quantity} units of {crypto_currency.name}!')
 
     return redirect('portfolio')
 
