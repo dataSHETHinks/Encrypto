@@ -79,5 +79,11 @@ class ContactForm(forms.ModelForm):
         model = Contact
         fields = ['name', 'email', 'subject', 'message']
 
+
 class SubscriptionForm(forms.Form):
-    email = forms.EmailField(label='Enter your e-mail address', required=True)
+    email = forms.EmailField(
+        required=True,
+        label='Email',
+        help_text='Required. Enter a valid email address.',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )

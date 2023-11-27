@@ -43,7 +43,7 @@
 
 
     <!-- TOP 3 CURRENCIES -->
-    <div class="crypto-item d-flex flex-column p-4">
+    <div class="crypto-item d-flex flex-column p-4" style="box-shadow: rgba(88, 102, 126, 0.08) 0px 4px 24px, rgba(88, 102, 126, 0.12) 0px 1px 2px; border: none; border-radius: 8px;">
         <h3 ><img src="{% static 'top3.png' %}" alt="Logo" height="26px" /> Top 3</h3>
         <table class="table" style="background-color: #f0f0f0;">
             <thead style="background-color: dimgray;color: whitesmoke;">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Fear & Greed Index -->
-    <div class="crypto-item  d-flex flex-column p-4" >
+    <div class="crypto-item  d-flex flex-column p-4" style="box-shadow: rgba(88, 102, 126, 0.08) 0px 4px 24px, rgba(88, 102, 126, 0.12) 0px 1px 2px; border: none; border-radius: 8px;">
         <h3>Fear & Greed Index</h3>
         <img src="{% static 'fear.png' %}" alt="Logo" width="280" height="170"/>
     </div>
@@ -76,7 +76,7 @@
     <div class="row justify-content-center">
         <div class="flex-container trending-container">
             <!-- Display the trending cryptocurrencies -->
-            <div class="crypto-item  d-flex flex-column p-4">
+            <div class="crypto-item  d-flex flex-column p-4" style="box-shadow: rgba(88, 102, 126, 0.08) 0px 4px 24px, rgba(88, 102, 126, 0.12) 0px 1px 2px; border: none; border-radius: 8px;">
 
                 <h3>
                     <img src="{% static 'trending.png' %}" alt="Logo" height="22px" width="22px"/>
@@ -231,8 +231,8 @@
             <div class="col-md-12">
                 <div class="card shadow-lg"> <!-- Added 'shadow-lg' for a large shadow effect -->
                     <div class="card-body">
-                        <h3 class="card-title">Dive into the digital currency deep with Encrypto: Stay updated, stay
-                            ahead.</h3>
+                        <h5 class="card-title">Dive into the digital currency deep with Encrypto: Stay updated, stay
+                            ahead.</h5>
 
                         <form method="post" action="{% url 'home' %}">
                             {% csrf_token %}
