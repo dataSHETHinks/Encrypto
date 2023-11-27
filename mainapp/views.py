@@ -520,7 +520,6 @@ def rate_limit_err(request):
 
 @login_required(login_url='login')
 def payment_history_view(request):
-    print("Hi", request.user)
     history = PaymentHistory.objects.filter(user=request.user)
-    print("history", history)
+    print("--", history)
     return render(request, 'payment-history.html', {'history' : history })

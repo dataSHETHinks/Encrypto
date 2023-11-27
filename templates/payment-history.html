@@ -6,7 +6,7 @@
 {% block content %}
 
 <h1>Payment History</h1>
-
+{% if history %}
 <table class="table table-bordered table-hover">
     <thead class="thead-light">
         <tr>
@@ -19,18 +19,21 @@
         </tr>
     </thead>
     <tbody>
-        {% for entry in history %}
-            <tr style="background-color: {% if not entry.success_flag %}lightcoral{% endif %}">
-                <td>{{ entry.user.username }}</td>
-                <td>{{ entry.payment_date }}</td>
-                <td>{{ entry.amount }}</td>
-                <td>{{ entry.name }}</td>
-                <td>{{ entry.quantity }}</td>
-                <td>{% if entry.success_flag %}SUCCESS{% else %}FAILED{% endif %}</td>
-            </tr>
-        {% endfor %}
+            {% for entry in history %}
+                <tr style="background-color: {% if not entry.success_flag %}lightcoral{% endif %}">
+                    <td>{{ entry.user.username }}</td>
+                    <td>{{ entry.payment_date }}</td>
+                    <td>{{ entry.amount }}</td>
+                    <td>{{ entry.name }}</td>
+                    <td>{{ entry.quantity }}</td>
+                    <td>{% if entry.success_flag %}SUCCESS{% else %}FAILED{% endif %}</td>
+                </tr>
+            {% endfor %}
     </tbody>
 </table>
+    {% else %}
+    <p>No payment history.</p>
+    {% endif %}
     <p><a class="btn btn-primary" href="{% url 'portfolio' %}">Back to portfolio</a></p>
 {% endblock content %}
 
