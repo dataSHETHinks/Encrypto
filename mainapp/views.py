@@ -75,6 +75,7 @@ def portfolio_view(request):
     # get the current logged in user
     current_user = request.user
 
+
     # get the list of cryptocurrencies owned by the current user
     user_cryptocurrencies = Cryptocurrency.objects.filter(user=current_user)
 
@@ -153,7 +154,6 @@ def home_view(request):
         # Get highlights data
         highlights_data = Cryptocurrency.objects.all().order_by('-current_price')[:3]
 
-
         # Initialize the subscription form
         subscription_form = SubscriptionForm()
 
@@ -195,7 +195,6 @@ def home_view(request):
                 'crypto_price_changes': crypto_price_changes,
                 'highlights_data': highlights_data,
                 'trending_crypto_data': trending_crypto_data,
-                'latest_3_added': latest_3_added,
                 'subscription_form': subscription_form,
             }
         else:
@@ -203,7 +202,6 @@ def home_view(request):
                 'top_10_crypto_data_global': top_10_crypto_data_global,
                 'highlights_data': highlights_data,
                 'trending_crypto_data': trending_crypto_data,
-                'latest_3_added': latest_3_added,
                 'subscription_form': subscription_form,  # Add the subscription form to the context
             }
 
@@ -238,7 +236,7 @@ def search_view(request):
             'image': image,
             'symbol': symbol,
             'market_cap': market_cap,
-            # 'is_already_in_portfolio': is_already_in_portfolio,
+
         }
 
         cryptocurrencies.append(cryptocurrency_info)
