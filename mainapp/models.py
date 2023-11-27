@@ -55,3 +55,15 @@ class Contact(models.Model):
     def __str__(self):
         return self.subject
 
+class PaymentHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_history')
+    payment_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    id_from_api = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
+    success_flag = models.BooleanField()
+
+
+    def __str__(self):
+            return f'{self.user.username} - Payment on {self.payment_date}'

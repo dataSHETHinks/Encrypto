@@ -24,6 +24,7 @@ urlpatterns = [
     # Checkout
     path("checkout/", views.checkout, name="checkout"),
     path("checkout/complete/", views.checkout_complete, name="checkout_complete"),
+    path('payment-history/', views.payment_history_view, name='payment_history_view'),
 
     # password reset stuff
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name="reset/password_reset.html"), name='password_reset'),
@@ -42,4 +43,5 @@ urlpatterns = [
     # Error Handling
     path('rate_limit_err/', views.rate_limit_err, name="rate_limit_err")
 ]
+
 

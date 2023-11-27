@@ -21,7 +21,7 @@ Wallet
     <h1 class="display-2 font-weight-bold text-success d-inline-block mr-2">${{ new_portfolio_value | floatformat:2 }}</h1>
     <h4 class="d-inline-block"><i class="fas fa-arrow-up mr-1"></i>{{ margin | floatformat:2 }}%</h4>
 {% endif %}
-
+    <p><a class="btn btn-primary"  style="float: right;" href="{% url 'payment_history_view' %}">Payment History</a></p>
 {% if user_cryptocurrencies %}
   <div class="table-responsive">
     <table class="table table-striped mb-4 mt-2">
