@@ -44,16 +44,15 @@ Sign Up
     </div>
 
     <script>
-      // JavaScript to handle file input change event
+
       document.getElementById('id_or_photo').addEventListener('change', function(event) {
         var input = event.target;
         var label = input.nextElementSibling;
         var fileName = input.files[0].name;
 
-        // Display the uploaded file name
+
         label.innerHTML = fileName;
 
-        // Add a green tick next to the file name
         label.innerHTML += ' &#10004;';
       });
     </script>
