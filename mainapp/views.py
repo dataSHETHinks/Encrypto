@@ -55,9 +55,7 @@ def signup_view(request):
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
-        print("form is", form)
         if form.is_valid():
-            print("yes")
             user = form.save(commit=False)
             user.password = make_password(form.cleaned_data['password1'])
             user.email = form.cleaned_data['email']
@@ -228,7 +226,6 @@ def search_view(request):
         image = data.get('large')
         symbol = data.get('symbol')
         market_cap = data.get('market_cap_rank')
-        print(coin_id)
 
         cryptocurrency_info = {
             'data': data,
@@ -342,13 +339,11 @@ def add_to_portfolio_view(request):
     # get values from the form
     coin_id = request.POST.get('id')
     quantity = request.POST.get('quantity')
-    print(coin_id)
 
     # get the crypto currency data from the coingecko api based on the coin id
     api_url = f'https://api.coingecko.com/api/v3/coins/{coin_id}'
     response = requests.get(api_url)
     data = response.json()
-    print(data)
     # store the name, symbol, current price, and market cap rank of the crypto currency
     user = request.user
     name = data['name']

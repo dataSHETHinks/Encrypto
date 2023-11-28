@@ -16,5 +16,5 @@ class PortfolioAdmin(admin.ModelAdmin):
 
 @admin.register(PaymentHistory)
 class PaymentHistoryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'payment_date', 'amount', 'id_from_api', 'name', 'quantity', 'success_flag')
+    list_display = ('user', 'payment_date', 'amount', 'id_from_api', 'name', 'quantity', 'success_flag', 'bought_flag')
 
