@@ -17,20 +17,19 @@
         {% endfor %}
     {% endif %}
 
- <h3>Today's Cryptocurrency Prices by Market Cap
-    </h3>
-  The global crypto market cap is $1.44T
+    <div class="container mt-3">
+        <div class="row justify-content-between align-items-center">
+            <h3 class="mb-0">Today's Cryptocurrency Prices by Market Cap</h3>
 
-    <!-- HIGHLIGHTS SECTION -->
-<div class="row justify-content-center"></div>
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="highlightSwitch" data-toggle="collapse"
+                       data-target="#top3Collapse" aria-expanded="false" aria-controls="top3Collapse">
+                <label class="custom-control-label" for="highlightSwitch"><b>Highlights</b></label>
+            </div>
+            <p style="color: lightslategray;">The global crypto market cap is <strong>$1.41T</strong>, a <span style="color: red;"><i class="fas fa-arrow-down"></i> 1.25% </span>decrease over the last day.</p>
+        </div>
 
-<div class="row justify-content-end">
-    <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="highlightSwitch" data-toggle="collapse"
-               data-target="#top3Collapse" aria-expanded="false" aria-controls="top3Collapse">
-        <label class="custom-control-label" for="highlightSwitch"><b>Highlights</b></label>
     </div>
-</div>
 
 
 <div class="flex-container highlights-container collapse" id="top3Collapse">
@@ -105,7 +104,7 @@
     <!--SEARCH BAR-->
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
-            {#    <h2 class="text-center custom-heading">Search Cryptocurrency</h2>#}
+
         </div>
         <div class="row mt-3 justify-content-start" style="color: #A6B0C3;">
             <div class="col-md-6 col-lg-4">
@@ -122,7 +121,7 @@
                         </div>
                         <input class="w-100 font-bold"
                                style="background-color: transparent; border: none; outline: none;"
-                               id="search-cryptocurrencies" type="text" placeholder="Search cryptocurrencies..."
+                               id="search-cryptocurrencies" type="text" placeholder="Search"
                                name="search_query" required>
                     </div>
                 </form>

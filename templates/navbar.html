@@ -1,5 +1,14 @@
 {% load static %}
 <style>
+
+     .custom-nav-logo-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
     .custom-portfolio-link:hover{
       cursor: pointer;
       background-color: #4caf50;
@@ -25,7 +34,7 @@
 <nav class="navbar navbar-expand-md bg-dark" style="">
   <a class="navbar-brand my-2 my-sm-0 custom-nav-logo text-white" href="{% url 'home' %}" >
       <img src="{% static 'encrypto.png' %}" alt="Logo" height="70px" width="70px"/>
-      Encrypto
+      <span class="custom-nav-logo-text">Encrypto</span>
   </a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
