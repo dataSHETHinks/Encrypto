@@ -60,7 +60,9 @@
                                         <form action="{% url 'delete_from_portfolio' crypto.id %}" method="POST">
                                             {% csrf_token %}
                                             <div class="modal-body">
-                                                <input type="hidden" id="sp" name="sp" value="{{ crypto.now }}"/>
+                                                <input type="hidden" id="cid" name="cid" value="{{ crypto.id_from_api }}">
+                                                <input type="hidden" id="cname" name="cname" value="{{ crypto.name }}" />
+                                                <input type="hidden" id="sp" name="sp" value="{{ crypto.now }}" />
                                                 <div class="form-group">
                                                     <label class="w-100 text-left" for="quantity">Enter units to
                                                         sell:</label>

@@ -278,21 +278,20 @@ def checkout_complete(request):
         return HttpResponse("Error in checkout")
 
     ccn = request.POST.get('ccn')
-    now = datetime.now()
 
-    current_time = now.strftime("%H:%M:%S")
     record = PaymentHistory.objects.create(
         user=request.user,
-        payment_date= current_time ,
-        amount= float(request.POST.get('quantity')) * float(request.POST.get('current_price')),
+        amount=float(request.POST.get('quantity')) * float(request.POST.get('current_price')),
         id_from_api=request.POST.get('id_from_api'),
         name=request.POST.get('cname'),
         quantity=request.POST.get('quantity'),
-        success_flag=False
+        success_flag=False,
+        bought_flag=True
     )
     if ccn == '4242424242424242':
         record.save()
-        return HttpResponse("Error in checkout")
+        messages.warning(request, f'Checkout failed!')
+        return redirect('portfolio')
     else:
         user = request.user
         try:
@@ -315,10 +314,6 @@ def checkout_complete(request):
                 crypto_currency.save()
         except Exception as e:
             print(e)
-
-        # ----------------------------------------------------
-        # code to update payment history with success payment
-        # ----------------------------------------------------
 
         # calculate the total value of the crypto currency
         total_value = float(request.POST.get('quantity')) * float(request.POST.get('current_price'))
@@ -404,11 +399,13 @@ def delete_from_portfolio_view(request, pk):
 
     user = request.user
     sp = request.POST.get('sp')
+    cname = request.POST.get('cname')
     if sp is None:
         messages.warning(request, f'Failed to obtain selling price!')
         return redirect('portfolio')
     sp = float(sp)
     quantity = request.POST.get('quantity')
+    cid = request.POST.get('cid')
 
     # get the crypto currency object from the database
     crypto_currency = Cryptocurrency.objects.get(pk=pk, user=request.user)
@@ -424,13 +421,16 @@ def delete_from_portfolio_view(request, pk):
         crypto_currency.save()
     portfolio.save()
 
-    # get all the crypto currencies in the portfolio and recalculate the total value of the portfolio
-    # user_cryptocurrencies = Cryptocurrency.objects.filter(user=user)
-    # for cryptocurrency in user_cryptocurrencies:
-    #     total_value = cryptocurrency.quantity * sp
-    #     portfolio.total_value += total_value
-
-    # portfolio.save()
+    record = PaymentHistory.objects.create(
+        user=request.user,
+        amount=float(quantity) * sp,
+        id_from_api=cid,
+        name=cname,
+        quantity=quantity,
+        success_flag=True,
+        bought_flag=False
+    )
+    record.save()
 
     # send an alert to the user that the crypto currency has been deleted from the portfolio
     messages.warning(request, f'You sold {quantity} units of {crypto_currency.name}!')
@@ -470,6 +470,5 @@ def rate_limit_err(request):
 
 @login_required(login_url='login')
 def payment_history_view(request):
-    history = PaymentHistory.objects.filter(user=request.user)
-    print("--", history)
-    return render(request, 'payment-history.html', {'history' : history })
+    history = PaymentHistory.objects.filter(user=request.user).order_by('-payment_date')
+    return render(request, 'payment-history.html', {'history':history})

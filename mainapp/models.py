@@ -53,7 +53,7 @@ class PaymentHistory(models.Model):
     name = models.CharField(max_length=50)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
     success_flag = models.BooleanField()
-
+    bought_flag = models.BooleanField()
 
     def __str__(self):
             return f'{self.user.username} - Payment on {self.payment_date}'
