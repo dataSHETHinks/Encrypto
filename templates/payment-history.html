@@ -5,28 +5,28 @@
 {% endblock title %}
 {% block content %}
 
-<h1>Payment History</h1>
+<h1>Transaction History</h1>
 {% if history %}
 <table class="table table-bordered table-hover">
     <thead class="thead-light">
         <tr>
-            <th>User</th>
-            <th>Payment Date</th>
-            <th>Amount</th>
-            <th>Name</th>
+            <th>Transaction Date</th>
+            <th>Amount (in USD)</th>
+            <th>Cryptocurrency</th>
             <th>Quantity</th>
+            <th>Method</th>
             <th>Status</th>
         </tr>
     </thead>
     <tbody>
             {% for entry in history %}
-                <tr style="background-color: {% if not entry.success_flag %}lightcoral{% endif %}">
-                    <td>{{ entry.user.username }}</td>
+                <tr>
                     <td>{{ entry.payment_date }}</td>
-                    <td>{{ entry.amount }}</td>
+                    <td>${{ entry.amount }}</td>
                     <td>{{ entry.name }}</td>
                     <td>{{ entry.quantity }}</td>
-                    <td>{% if entry.success_flag %}SUCCESS{% else %}FAILED{% endif %}</td>
+                    <td>{% if entry.bought_flag %}BUY{% else %}SELL{% endif %}</td>
+                    <td>{% if entry.success_flag %}<p class="badge badge-success">SUCCESS</p>{% else %}<p class="badge badge-danger">FAIL</p>{% endif %}</td>
                 </tr>
             {% endfor %}
     </tbody>
