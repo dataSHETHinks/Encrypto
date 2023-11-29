@@ -3,7 +3,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -25,15 +25,13 @@
 
     <title>Encrypto | {% block title %}{% endblock title %}</title>
   </head>
-  <body>
+  <body class="d-flex flex-column">
     {% include 'navbar.html' %}
-    <div class="container" style="min-height: 80%;">
+    <main class="container flex-grow-1">
       {% block content %}
       {% endblock content %}
-    </div>
-    <div class="footer">
-        {% include 'footer.html' %}
-    </div>
+    </main>
+    {% include 'footer.html' %}
 
     {% block scripts %}
     {% endblock scripts %}

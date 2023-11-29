@@ -4,27 +4,17 @@ from django.db import models
 # Override the default User model to make the email unique
 User._meta.get_field('email')._unique = True
 
-# Make the profile for a user, automatically created when a user is created using Django signals
+# Make the profile for a user
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    referral_code = models.CharField(max_length=10, unique=True)
-    bonus = models.IntegerField(default=0)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} profile'
 
-# Create the referal model
-class Referal(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    referrer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals')
-
-    def __str__(self):
-        return f'{self.user.username} was referred by {self.referrer.username}'
 
 # Create the Cryptocurrency model
 class Cryptocurrency(models.Model):
-    # here name is also the id of the cryptocurrency, so useful for API calls
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cryptocurrencies', null=True)
     id_from_api = models.CharField(max_length=50)
     name = models.CharField(max_length=50) 
@@ -55,3 +45,15 @@ class Contact(models.Model):
     def __str__(self):
         return self.subject
 
+class PaymentHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_history')
+    payment_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    id_from_api = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
+    success_flag = models.BooleanField()
+    bought_flag = models.BooleanField(default=False)
+
+    def __str__(self):
+            return f'{self.user.username} - Payment on {self.payment_date}'

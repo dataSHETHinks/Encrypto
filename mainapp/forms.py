@@ -38,7 +38,7 @@ class CustomUserCreationForm(UserCreationForm):
         required=True,
         label='Upload a Valid ID or Photo',
         help_text='Required. Upload a valid ID or photo.',
-        widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/jpeg, image/png, image/jpg'})
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/jpeg, image/png, image/jpg'})
     )
 
     class Meta:
@@ -47,9 +47,43 @@ class CustomUserCreationForm(UserCreationForm):
 
         
 class ContactForm(forms.ModelForm):
+    name = forms.CharField(
+        required=True,
+        label='Name',
+        help_text='Required name',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    email = forms.EmailField(
+        required=True,
+        label='Email',
+        help_text='Required. Enter a valid email address.',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    subject = forms.CharField(
+        required=True,
+        label='Subject',
+        help_text='Required. Enter a valid subject',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    message = forms.CharField(
+        required=True,
+        label='Message',
+        help_text='Required. Enter a valid subject',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Contact
         fields = ['name', 'email', 'subject', 'message']
 
+
 class SubscriptionForm(forms.Form):
-    email = forms.EmailField(label='Enter your e-mail address', required=True)
+    email = forms.EmailField(
+        required=True,
+        label='Email',
+        help_text='Required. Enter a valid email address.',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )

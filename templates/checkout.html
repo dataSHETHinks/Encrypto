@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <section class="min-vh-100 w-100 d-flex align-items-center justify-content-center">
+        <div class="container mx-auto d-flex flex-column align-items-center">
+            <img src="{% static 'encrypto.png' %}" width="144" height="144" alt="logo" />
+
+            <form class="w-50 mx-auto mt-4" action="{% url 'checkout_complete' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mb-2">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="form-control" id="email" required />
+                    <div class="invalid-feedback">
+                        Please check your email address!
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ccn">Card Information</label>
+                    <input id="ccn" name="ccn" type="tel" class="form-control mb-1" inputmode="numeric" pattern="[0-9\s]{13,19}" maxlength="19" placeholder="XXXX XXXX XXXX XXXX XXXX" required />
+                    <div class="d-flex align-items-center form-group">
+                        <input id="exp_date" name="exp_date" type="tel" class="w-50 mr-1 form-control" placeholder="MM/YY" pattern="(1[0-2]|0[1-9])\/(1[5-9]|2\d)" required />
+                        <input id="cvv" name="cvv" type="tel" class="w-50 form-control" placeholder="CVV" pattern="\d{3}" required />
+                        <div class="invalid-feedback">
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid information. Please match the format and ensure appropriate input.
+                    </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="card_name">Name on Card</label>
+                    <input id="card_name" name="card_name" type="text" class="form-control" required />
+                </div>
+                <div class="d-none form-group">
+                    <input type="hidden" id="id_from_api" class="form-control" name="id_from_api" value="{{ crypto.id_from_api }}" />
+                    <input type="hidden" id="cname" class="form-control" name="cname" value="{{ crypto.name }}" />
+                    <input type="hidden" id="symbol" class="form-control" name="symbol"  value="{{ crypto.symbol }}" />
+                    <input type="hidden" id="current_price" class="form-control" name="current_price" value="{{ crypto.current_price }}" />
+                    <input type="hidden" id="quantity" class="form-control" name="quantity" value="{{ crypto.quantity }}" />
+                </div>
+                <input type="submit" class="w-100 text-center btn p-2 bg-dark text-light " value="Pay ${{ amount | floatformat:2 }}" />
+            </form>
+        </div>
+    </section>
+</body>
+</html>

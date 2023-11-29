@@ -5,12 +5,11 @@ Sign Up
 {% block content %}
     <div class="mx-auto bg-white p-3 rounded-lg" style="max-width: 32rem;">
         <h1 class="mb-4 text-center">Signup</h1>
-        <form method="post" class="my-4 p-4">
+        <form method="post" class="my-4 p-4" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-group">
             <label for="username">Username</label>
                 {{ form.username }}
-
           </div>
           <div class="form-group">
             <label for="email">Email address</label>
@@ -25,13 +24,9 @@ Sign Up
             {{ form.password2 }}
           </div>
              <div class="form-group">
-            <label for="id_or_photo">Upload a Valid ID or Photo</label>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="id_or_photo" name="id_or_photo" accept="image/jpeg, image/png, image/jpg">
-              <label class="custom-file-label" for="id_or_photo">Choose file</label>
-            </div>
-            <div id="file-info" class="mt-2"></div>
-          </div>
+                 <label for="id_or_photo">Upload a Valid ID or Photo</label>
+                {{ form.id_or_photo }}
+        </div>
           <button type="submit" class="btn btn-primary mt-3 w-100">Signup</button>
 
 
@@ -49,16 +44,15 @@ Sign Up
     </div>
 
     <script>
-      // JavaScript to handle file input change event
+
       document.getElementById('id_or_photo').addEventListener('change', function(event) {
         var input = event.target;
         var label = input.nextElementSibling;
         var fileName = input.files[0].name;
 
-        // Display the uploaded file name
+
         label.innerHTML = fileName;
 
-        // Add a green tick next to the file name
         label.innerHTML += ' &#10004;';
       });
     </script>
